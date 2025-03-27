@@ -1,0 +1,25 @@
+.nav-div {
+    height: vh;
+}
+.register-div {
+    margin-top: 50px;;
+}
+.socialLogin {
+    background-color: white;
+}
+.error-msg {
+    color: red;
+    font-size: 14px;
+    font-weight: 600;
+}
+.success-msg {
+    color: green;
+    font-size: 14px;
+    font-weight: 600;    
+}
+.close-msg {
+    font-size: 10px;
+}
+.alert-msg-box {
+    height: 60px;
+}
