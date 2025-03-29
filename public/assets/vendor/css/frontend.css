@@ -23,3 +23,23 @@
 .alert-msg-box {
     height: 60px;
 }
+.order-div {
+    width: 800px;
+    height:300px;
+}
+.order-form {
+    margin-bottom: 10px;
+}
+.form-instruction {
+    color:red;
+    font-size: 12px;;
+}
+.d-none {
+    display: none;
+}
+.d-open {
+    display: block;
+}
+.see_detail {
+    cursor: pointer;
+}

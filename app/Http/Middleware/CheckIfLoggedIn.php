@@ -25,10 +25,10 @@ class CheckIfLoggedIn
                 Auth::logout();
                 Cookie::queue('user_data', false, -1);
                 Cookie::queue('last_login', false, -1);
-                return redirect()->route('index')->with('error', 'You are logged out!');;
+                return redirect()->route('user-login')->with('error', 'You are logged out!');
             }
             return $next($request);
         }
-        return redirect()->route('index')->with('error', 'Your are not logged in!');;
+        return redirect()->route('user-login');
     }
 }

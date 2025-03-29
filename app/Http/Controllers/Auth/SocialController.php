@@ -15,7 +15,7 @@ class SocialController extends Controller
     public function redirect(Request $request, $provider)
     {
         try {
-	    Cookie::queue('url__', base64_encode($request->url), time() + (60 * 60 * 24 * 1));
+	        Cookie::queue('url__', base64_encode($request->url), time() + (60 * 60 * 24 * 1));
             return  Socialite::driver($provider)->stateless()->redirect();
         } catch (\Exception $error) {
             return response()->json(['message' => 'something went wrong ' . $error->getMessage()]);
@@ -27,7 +27,6 @@ class SocialController extends Controller
     public function callback($provider)
     {
         try {
-	    date_default_timezone_set('Asia/Kolkata');
             $socialUser = Socialite::driver($provider)->stateless()->user();
             $NameArray = explode(' ',$socialUser->getName());
             $users = User::where(['email' => $socialUser->getEmail()])->first();
@@ -38,7 +37,7 @@ class SocialController extends Controller
                         $user->name = $NameArray[0];
                         $user->provider_id = $socialUser->getId();
                         $user->provider = $provider;
-			$user->last_login = date('Y-m-d H:i:s');
+			            $user->last_login = date('Y-m-d H:i:s');
                         $user->update();
                     }
                 } else {
@@ -46,31 +45,31 @@ class SocialController extends Controller
                     $user->name = $NameArray[0];
                     $user->provider_id = $socialUser->getId();
                     $user->provider = $provider;
-		    $user->last_login = date('Y-m-d H:i:s');
+		            $user->last_login = date('Y-m-d H:i:s');
                     $user->update();
                 }
                 Auth::login($users);
                 $user = auth()->user()->refresh();
-        	$setdata = json_encode($this->generateObject(
+        	        $setdata = json_encode($this->generateObject(
             		'Success',
             		'Authenticated successfully',
             		$user->createToken(env('TOKEN_SECRET') || 'cakeboxtokenforuserdata')->plainTextToken,
             		$user->id,
             		$user->email
-        	));
-        	Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
-        	Cookie::queue('last_login', base64_encode($user->last_login), time() + (60 * 60 * 24 * 1));
-        	return redirect()->route('dashboard');
+        	    ));
+        	    Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
+        	    Cookie::queue('last_login', base64_encode($user->last_login), time() + (60 * 60 * 24 * 1));
+        	    return redirect()->route('dashboard');
             } else {
-		$last_login = date('Y-m-d H:i:s');
+		        $last_login = date('Y-m-d H:i:s');
                 $user = User::create([
                     'name'          => $NameArray[0],
                     'email'         => $socialUser->getEmail(),
                     'password'      => Hash::make($socialUser->getId()),
                     'provider_id'   => $socialUser->getId(),
                     'provider'      => $provider,
-		    'last_login'    => $last_login,
-		    'phone_no'	    => ''
+		            'last_login'    => $last_login,
+		            'phone_no'	    => ''
                 ]);
                 Auth::login($user);
                 $setdata = json_encode($this->generateObject(
@@ -111,12 +110,11 @@ class SocialController extends Controller
                 $this->dispatch($sendMail);*/
 
                 //setcookie('__ajxd', base64_encode($setdata), time() + (60 * 60 * 24 * 7), '/', env('COOKIE_URL'));
-		Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
+		        Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
                 Cookie::queue('last_login', base64_encode($user->last_login), time() + (60 * 60 * 24 * 1));
                 return redirect()->route('dashboard');
             }
         } catch (\Exception $error) {
-dd($error);
             return redirect()->away(env('FRONTEND_REDIRECT_URL'));
         }
     }
