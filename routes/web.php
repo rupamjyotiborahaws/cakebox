@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\Frontend\FrontendController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,8 @@ use App\Http\Controllers\User\OrderController;
 |
 */
 
-Route::get('/', [AuthController::class, 'index'])->name('index');
+Route::get('/', [FrontendController::class, 'index'])->name('index');
+Route::get('/products', [FrontendController::class, 'products'])->name('products');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/user-login', [AuthController::class, 'userLogin'])->name('user-login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');

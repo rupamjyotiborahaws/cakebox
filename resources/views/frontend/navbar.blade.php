@@ -9,6 +9,9 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{route('products')}}">Products</a>
+        </li>
         @if(Auth::check())
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{route('order')}}">Place an Order</a>

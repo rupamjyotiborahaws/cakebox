@@ -13,6 +13,7 @@ use App\Models\Type;
 use App\Models\Flavor;
 use App\Models\Weight;
 use App\Models\Orders;
+use App\Models\Payment;
 
 class OrderController extends Controller
 {
@@ -37,6 +38,7 @@ class OrderController extends Controller
         $cake_weight  = $request->cake_weight;
         $cake_instruction  = $request->cake_instruction;
         $delivery_datetime = Carbon::parse($request->cake_delivery_date . ' ' . $request->cake_delivery_time);
+        $total_amount = 800;
         $request->validate([
             'image' => 'required|file|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
@@ -48,6 +50,7 @@ class OrderController extends Controller
             $fileUrl = Storage::url($filePath);
         }
         if($fileUrl) {
+            $order_no = 'CB_'.Auth::user()->id.'_'.strtotime(date('Y-m-d H:i:s'));
             $order = Orders::create([
                 'occassion' => $occassion,
                 'cake_type' => $cake_type,
@@ -58,8 +61,18 @@ class OrderController extends Controller
                 'instruction' => $cake_instruction || "Not Available",
                 'design_reference' => $filePath,
                 'user_id' => Auth::user()->id,
-                'status' => 1
+                'status' => 1,
+                'order_no' => $order_no
             ]);
+            if($order) {
+                $payment = Payment::create([
+                    'order_id' => $order_no,
+                    'amount_to_be_paid' => $total_amount,
+                    'amount_paid' => 0,
+                    'payment_id' => 'Not Available',
+                    'total_amount' => $total_amount
+                ]);    
+            }
             $cake_type_name = Type::where(['id'=>$cake_type])->get()[0]['cake_type'];
             $cake_weight_desc = Weight::where(['id'=>$cake_weight])->get()[0]['cake_weight'];
             $recipient = '+91'.Auth::user()->phone_no;
@@ -72,7 +85,6 @@ class OrderController extends Controller
     }
 
     public function past_orders(Request $request) {
-        //$orders = Orders::select('*')->orderBy('order_date','DESC')->get();
         return view('users.past_orders');
     }
 }

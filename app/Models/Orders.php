@@ -11,5 +11,5 @@ class Orders extends Model
 
     protected $table = 'orders';
 
-    protected $fillable = ['occassion','cake_type','flavor','weight','order_date','delivery_date_time','instruction','design_reference','user_id','status'];
+    protected $fillable = ['occassion','cake_type','flavor','weight','order_date','delivery_date_time','instruction','design_reference','user_id','status','order_no'];
 }
