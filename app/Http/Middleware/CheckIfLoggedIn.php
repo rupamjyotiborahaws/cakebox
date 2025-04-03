@@ -23,7 +23,7 @@ class CheckIfLoggedIn
             $now = time();
             if($now - strtotime($last_login) > $request->session_time * 60) {
                 Auth::logout();
-                Cookie::queue('user_data', false, -1);
+                Cookie::queue('auth_token', false, -1);
                 Cookie::queue('last_login', false, -1);
                 return redirect()->route('user-login')->with('error', 'You are logged out!');
             }

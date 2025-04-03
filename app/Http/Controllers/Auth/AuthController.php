@@ -20,16 +20,25 @@ class AuthController extends Controller
         ]);
         Auth::login($user);
         $user = auth()->user()->refresh();
-        $setdata = json_encode($this->generateObject(
-            'Success',
-            'Authenticated successfully',
-            $user->createToken(env('TOKEN_SECRET') || 'cakeboxtokenforuserdata')->plainTextToken,
-            $user->id,
-            $user->email
-        ));
-        Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
-        Cookie::queue('last_login', base64_encode($user->last_login), time() + (60 * 60 * 24 * 1));
-        return redirect()->route('dashboard');
+        // $setdata = json_encode($this->generateObject(
+        //     $user->id,
+        //     $user->email
+        // ));
+        if($user) {
+            $token = $user->createToken('web_app_token')->plainTextToken;
+            $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
+            $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
+            return response()->json([
+                'status' => 'success',
+                'landing' => $user->isAdmin === 0 ? 'dashboard' : 'admin/dashboard',
+                'message' => 'Account created successfully.'
+            ])->withCookie($cookie1)->withCookie($cookie2);
+        } else {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Could not create the account.'
+            ]);   
+        }
     }
 
     public function login(Request $request) {
@@ -40,22 +49,38 @@ class AuthController extends Controller
         $user = User::where('email', $request['email'])->first();
         if($user) {
             if (!Auth::attempt($attr)) {
-                return redirect()->route('user-login')->with('error', 'Credentials does not matched!');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Credentials doe not matched.'
+                ]);
             }
             $user = auth()->user()->refresh();
             User::where(['id'=>$user->id])->update(['last_login'=>date('Y-m-d H:i:s')]);
-            $setdata = json_encode($this->generateObject(
-                'Success',
-                'Authenticated successfully',
-                $user->createToken(env('TOKEN_SECRET') || 'cakeboxtokenforuserdata')->plainTextToken,
-                $user->id,
-                $user->email
-            ));
-            Cookie::queue('user_data', base64_encode($setdata), time() + (60 * 60 * 24 * 1));
-            Cookie::queue('last_login', base64_encode($user->last_login), time() + (60 * 60 * 24 * 1));
-            return redirect()->route('dashboard');
+            // $setdata = json_encode($this->generateObject(
+            //     $user->id,
+            //     $user->email
+            // ));
+            if($user) {
+                //dd(Auth::user());
+                $token = $user->createToken('web_app_token')->plainTextToken;
+                $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
+                $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
+                return response()->json([
+                    'status' => 'success',
+                    'landing' => $user->isAdmin === 0 ? 'dashboard' : 'admin/dashboard',
+                    'message' => 'Login successfully.'
+                ])->withCookie($cookie1)->withCookie($cookie2);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Could not logged in.'
+                ]);   
+            }
         } else {
-            return redirect()->route('user-login')->with('error', 'User not found');
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'User not found.'
+            ]);
         }
     }
 
@@ -63,12 +88,9 @@ class AuthController extends Controller
         return view('frontend.login');
     }
 
-    public function generateObject($status, $message, $token, $userId, $userEmail)
+    public function generateObject($userId, $userEmail)
     {
         return array(
-            'status'  => $status,
-            'message' => $message,
-            'token' => $token,
             'userId'  => $userId,
             'userEmail' => $userEmail
         );
@@ -78,12 +100,28 @@ class AuthController extends Controller
         return view('users.dashboard');
     }
 
+    public function profile(Request $request) {
+        $user = User::where(['id' => Auth::user()->id])->get()[0];
+        unset($user['password']);
+        unset($user['provider_id']);
+        unset($user['provider']);
+        unset($user['last_login']);
+        unset($user['remember_token']);
+        unset($user['created_at']);
+        unset($user['updated_at']);
+        return view('users.profile',compact('user'));
+    }
+
     public function logout(Request $request)
     {
+        $user = $request->user();
+        if ($user) {
+            $user->tokens()->delete();
+        }
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        Cookie::queue('user_data', false, -1);
+        Cookie::queue('auth_token', false, -1);
         Cookie::queue('last_login', false, -1);
         return redirect()->route('user-login')->with('success', 'You are succesfully logged out!');
     }

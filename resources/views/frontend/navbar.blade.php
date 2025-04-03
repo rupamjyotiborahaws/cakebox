@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="{{route('dashboard')}}">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{{route('products')}}">Products</a>
@@ -22,7 +22,7 @@
           <li class="nav-item dropdown" style="align:right;">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{Auth::user()->email}}</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{{route('profile')}}">Profile</a></li>
               <li><p class="dropdown-item" href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li>
               <li><a class="dropdown-item" href="{{route('logout')}}">Logout</a></li>
             </ul>

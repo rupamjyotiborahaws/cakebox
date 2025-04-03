@@ -33,9 +33,9 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Sl. No.</th>
-                                            <th scope="col">Order Date</th>
-                                            <th scope="col">Status</th>
+                                            <th>Sl. No.</th>
+                                            <th>Order Date</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody class="orders-tbody">

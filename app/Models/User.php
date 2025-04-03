@@ -24,7 +24,8 @@ class User extends Authenticatable
         'phone_no',
         'provider',
         'provider_id',
-        'last_login'
+        'last_login',
+        'isAdmin'
     ];
 
     /**
@@ -46,4 +47,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin === true;
+    }
 }

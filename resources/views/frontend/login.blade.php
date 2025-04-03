@@ -9,12 +9,9 @@
         <div class="d-flex justify-content-center align-items-center full-height register-div">
             <div class="card text-center p-4 shadow-lg" style="width: 24rem;">
                 <div class="card-body">
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show alert-msg-box" role="alert">
-                            <p class="error-msg">{{ session('error') }}</p>
-                            <button type="button" class="btn-close close-msg" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                    <div class="alert alert-danger alert-dismissible fade show alert-msg-box d-none" role="alert">
+                        <p class="error-msg"></p>
+                    </div>
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show alert-msg-box" role="alert">
                             <p class="success-msg">{{ session('success') }}</p>
@@ -22,18 +19,18 @@
                         </div>
                     @endif
                     <h5 class="card-title">Sign in to Cakebox</h5>
-                    <form method="POST" action="{{route('login')}}">
-                    @csrf
-                        <div class="mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="submit" class="btn btn-success sign-in" value="Sign In">
-                        </div>
-                    </form>
+                    <div class="mb-3 loadingzone d-none">
+                        <span class="loading_msg"></span> &nbsp;&nbsp;<span class="loader"></span>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="submit" class="btn btn-success sign-in" value="Sign In">
+                    </div>
                     <div class="mb-3">
                         <p>OR</p>
                     </div>
@@ -43,6 +40,9 @@
                         </button>
                         <!-- <img src="{{url('/')}}/assets/vendor/imgs/facebook.png" alt="facebook" width="32" height="32" class="socialLogin" data-url="auth/facebook" /> -->
                     </div> 
+                    <div class="mb-3">
+                        <p>Don't have an account? <a href="{{route('index')}}">Create Now</a></p>
+                    </div>
                 </div>
             </div>
         </div>
