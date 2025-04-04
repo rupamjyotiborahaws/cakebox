@@ -110,9 +110,9 @@ class OrderController extends Controller
             foreach ($adminUsers as $admin) {
                 $admin->notify(new NewOrderNotification($message,$order_no));
             }
-            //$recipient = '+91'.Auth::user()->phone_no;
-            //$message = "Your order for ".$cake_type_name." cake weighted ".$cake_weight_desc." has been placed. Delivery requested on ".date("l, F j, Y g:i A", strtotime($delivery_datetime))."\nThank you for ordering with us.\nTeam CakeBox";
-            //$value = $this->twilioService->sendSms($recipient, $message);
+            $recipient = '+91'.Auth::user()->phone_no;
+            $message = "Your order for ".$cake_type_name." cake weighted ".$cake_weight_desc." has been placed. Delivery requested on ".date("l, F j, Y g:i A", strtotime($delivery_datetime))."\nThank you for ordering with us.\nTeam CakeBox";
+            $value = $this->twilioService->sendSms($recipient, $message);
             return redirect()->route('order')->with('success', 'Your order is placed! Track your order <a href="#">here</a>');
         } else {
             return redirect()->back()->withErrors(['error' => 'Uploaded file could not be saved. Please try again']);
