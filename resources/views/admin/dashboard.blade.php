@@ -1,25 +1,23 @@
 @extends('layout.admin')
 
 @section('content')
+<link href="{{url('/')}}/assets/vendor/css/admin.css" rel="stylesheet" />
 <div class="row">
     <div class="col-md-12 col-lg-12 col-xs-12 nav-div">
-        @extends('frontend.navbar')
+        @extends('admin.admin-nav')
     </div>
-    <!-- justify-content-center align-items-center -->    
-    <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
-        <div class="d-flex full-height justify-content-center align-items-center register-div">
-            <div class="card text-center p-4 shadow-lg" style="width: 24rem;">
-                <div class="card-body">
-                    Welcome to CakeBox          
-                </div>
-            </div>
+</div>
+<div class="row">
+    <div class="col-md-2 col-lg-2 col-sm-12 col-xs-12">
+
+    </div>
+    <div class="col-md-10 col-lg-10 col-sm-12 col-xs-12">
+        <div class="row dashboard-counts">
+            <!-- justify-content-center align-items-center -->    
+            
         </div>
     </div>
 </div>
-<!-- Button to Open Modal -->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-    Open Modal
-</button> -->
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"> <!-- aria-hidden="true" -->

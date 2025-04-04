@@ -36,6 +36,7 @@ class DataSeeder extends Seeder
         DB::table('session_management')->insert([
             ['session_time' => 600]
         ]);
+        
         DB::table('order_status')->insert([
             ['order_status' => 'Pending'],
             ['order_status' => 'Processing'],

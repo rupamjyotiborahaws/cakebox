@@ -40,4 +40,5 @@ Route::middleware(['session_time','ifloggedin'])->group(function () {
 // -----------------------------------Admin Routes----------------------------------------------
 Route::prefix('admin')->middleware(['session_time','ifloggedin'])->group(function() {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin_dashboard');
+    Route::get('/order-details/{status_id}', [AdminController::class, 'order_details_by_status'])->name('admin_order_status');
 });

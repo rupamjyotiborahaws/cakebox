@@ -40,7 +40,7 @@ class OrderController extends Controller
         $cake_type  = $request->cake_type;
         $cake_flavor  = $request->cake_flavor;
         $cake_weight  = $request->cake_weight;
-        $cake_instruction  = $request->cake_instruction;
+        $cake_instruction  = trim($request->cake_instruction);
         $delivery_datetime = Carbon::parse($request->cake_delivery_date . ' ' . $request->cake_delivery_time);
         $total_amount = 0.00;
         $fileUrl = true;
@@ -90,7 +90,7 @@ class OrderController extends Controller
                 'weight' => $cake_weight,
                 'order_date' => date('Y-m-d H:i:s'),
                 'delivery_date_time' => $delivery_datetime,
-                'instruction' => $cake_instruction || "Not Available",
+                'instruction' => $cake_instruction == null || $cake_instruction == "" ? "Not Available" : $cake_instruction,
                 'design_reference' => $filePath,
                 'user_id' => Auth::user()->id,
                 'status' => 1,

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('weight');  //500GM,1KG etc.
             $table->timestamp('order_date');
             $table->timestamp('delivery_date_time');
-            $table->integer('instruction'); //Special instruction from customer
+            $table->string('instruction'); //Special instruction from customer
             $table->string('design_reference'); //Uploaded reference image of cake
             $table->timestamps();
         });
