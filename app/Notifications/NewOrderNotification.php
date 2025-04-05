@@ -44,9 +44,9 @@ class NewOrderNotification extends Notification //implements ShouldBroadcast
     {
         Log::info('Sending push notification to user ID: ' . $notifiable->id);
         return (new WebPushMessage)
-            ->title('Hey!')
+            ->title('Hey, You got a new order at')
             ->icon('/images/notification-icon.png')
-            ->body('You got a new order.')
+            ->body('Visit the admin portal')
             ->action('View App', 'view_app')
             ->data(['url' => '/admin/dashboard']);
     }

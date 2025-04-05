@@ -1,25 +1,10 @@
 self.addEventListener('push', event => {
     const data = event.data.json();
-    //console.log(data);
-    const title = data.title;
-    const options = {
-        body: data.body,
-        data: data.data || {},
-        silent: false,
-        vibrate: [100, 50, 100],
-        actions: [
-            {
-                action: 'open_url',
-                title: 'Open App',
-            },
-            {
-                action: 'dismiss',
-                title: 'Dismiss',
-            }
-        ]
-    };
+    console.log(data);
     event.waitUntil(
-        self.registration.showNotification((title, options))
+        self.registration.showNotification(data.title, {
+            body: data.body
+        })
     );
 });
 
