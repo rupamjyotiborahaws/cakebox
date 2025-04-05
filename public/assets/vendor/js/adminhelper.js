@@ -55,3 +55,50 @@ $(document).on('click', '.admin-status-card', function(){
     window.location.href = '/admin/order-details/'+status_id;
 });
 
+async function registerPush() {
+    // if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    //     alert('Push messaging is not supported.');
+    //     return;
+    // }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => {
+                console.log('Service worker registered:', reg);
+            })
+            .catch(err => {
+                console.error('Service worker registration failed:', err);
+            });
+    }
+
+    const registration = await navigator.serviceWorker.register('/service-worker.js');
+    const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array("BH9E2StT6Y1ZvCdLCiUOQkdK2Ig7NReQ7PTYna_MGaQ_wj9UB4JKOI2TnDihWnA8s9Fj9D243YC9VCR1OSafGUI")
+    });
+
+    // Send subscription to server
+    await fetch('/api/v1/push/subscribe', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(subscription)
+    });
+
+    alert('Push subscription registered!');
+}
+
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+}
+

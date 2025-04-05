@@ -20,6 +20,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{Auth::user()->email}}</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><p class="dropdown-item" href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li>
+              <li><button class="dropdown-item" onclick="registerPush()">Enable Notifications</button></li>
               <li><a class="dropdown-item" href="{{route('logout')}}">Logout</a></li>
             </ul>
           </li>

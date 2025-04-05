@@ -14,6 +14,7 @@ class AdminController extends Controller
 
     public function order_details_by_status(Request $request, $status_id) {
         $status_id = $request->status_id;
+        $order_data = [];
         $order_det = Orders::join('types', 'orders.cake_type', '=', 'types.id')
         ->join('flavors', 'orders.flavor', '=', 'flavors.id')
         ->join('weight', 'orders.weight', '=', 'weight.id')

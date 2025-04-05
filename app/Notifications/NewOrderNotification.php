@@ -9,22 +9,25 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\PrivateChannel;
+use NotificationChannels\WebPush\WebPushMessage;
+use NotificationChannels\WebPush\WebPushChannel;
+use Illuminate\Support\Facades\Log;
 
-class NewOrderNotification extends Notification implements ShouldBroadcast
+class NewOrderNotification extends Notification //implements ShouldBroadcast
 {
     use Queueable;
 
-    public $message;
-    public $order_no;
+    //public $message;
+    //public $order_no;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($message,$order_no)
-    {
-        $this->message = $message;
-        $this->order_no = $order_no;
-    }
+    // public function __construct()
+    // {
+    //     //$this->message = $message;
+    //     //$this->order_no = $order_no;
+    // }
 
     /**
      * Get the notification's delivery channels.
@@ -33,20 +36,28 @@ class NewOrderNotification extends Notification implements ShouldBroadcast
      */
     public function via(object $notifiable): array
     {
-        return ['broadcast', 'database'];
+        //return ['broadcast', 'database']; Websocket notification
+        return [WebPushChannel::class];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-
-    public function toBroadcast(object $notifiable): BroadcastMessage
+    public function toWebPush($notifiable, $notification)
     {
-        return new BroadcastMessage([
-            'message' => $this->message,
-            'order_no' => $this->order_no,
-        ]);
+        Log::info('Sending push notification to user ID: ' . $notifiable->id);
+        return (new WebPushMessage)
+            ->title('Hey!')
+            ->icon('/images/notification-icon.png')
+            ->body('You got a new order.')
+            ->action('View App', 'view_app')
+            ->data(['url' => '/admin/dashboard']);
     }
+
+    // public function toBroadcast(object $notifiable): BroadcastMessage
+    // {
+    //     return new BroadcastMessage([
+    //         'message' => $this->message,
+    //         'order_no' => $this->order_no,
+    //     ]);
+    // }
 
     /**
      * Get the array representation of the notification.
@@ -54,16 +65,16 @@ class NewOrderNotification extends Notification implements ShouldBroadcast
      * @return array<string, mixed>
      */
 
-    public function toDatabase(object $notifiable): array
-    {
-        return [
-            'message' => $this->message,
-            'order_no' => $this->order_no
-        ];
-    }
+    // public function toDatabase(object $notifiable): array
+    // {
+    //     return [
+    //         'message' => $this->message,
+    //         'order_no' => $this->order_no
+    //     ];
+    // }
 
-    public function broadcastOn()
-    {
-        return new PrivateChannel('admin-notifications');
-    }
+    // public function broadcastOn()
+    // {
+    //     return new PrivateChannel('admin-notifications');
+    // }
 }

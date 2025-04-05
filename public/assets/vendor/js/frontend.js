@@ -168,7 +168,3 @@ $(document).ready(function() {
         });        
     });
 });
-
-function validate(name,email,phone_no) {
-    return true;
-}

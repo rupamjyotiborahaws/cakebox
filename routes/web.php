@@ -18,6 +18,11 @@ use App\Http\Controllers\Admin\AdminController;
 |
 */
 
+Route::get('/test-push', function () {
+    $user = \App\Models\User::find(12);
+    $user->notify(new \App\Notifications\NewOrderNotification());
+});
+
 // -----------------------------------Common Routes--------------------------------------------
 Route::get('/', [FrontendController::class, 'index'])->name('index');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
