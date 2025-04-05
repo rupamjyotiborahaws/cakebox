@@ -19,7 +19,6 @@
         <script type="module" src="{{ Vite::asset('resources/js/bootstrap.js') }}"></script>
         <script type="module" src="{{ Vite::asset('resources/js/app.js') }}"></script>
         <script type="module" src="{{ Vite::asset('resources/js/bootstrap.js') }}"></script>
-        <script type="module" src="{{ Vite::asset('assets/vendor/js/adminhelper.js') }}"></script>
     </head>
     <body>
         <div class="container-fluid">
