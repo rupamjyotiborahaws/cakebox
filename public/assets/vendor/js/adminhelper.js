@@ -55,24 +55,24 @@ $(document).on('click', '.admin-status-card', function(){
     window.location.href = '/admin/order-details/'+status_id;
 });
 
-function askNotificationPermission() {
-    if(!('Notification' in window)) {
-        alert('This browser does not support notifications.');
-        return;
-    }
-    Notification.requestPermission().then(function (permission) {
-        if (permission === 'granted') {
-            console.log('Notifications allowed!');
-            registerPush();
-        } else if (permission === 'denied') {
-            console.warn('Notifications denied by the user.');
-        } else {
-            console.log('Notification permission dismissed.');
-        }
-    });
-}
+// function askNotificationPermission() {
+//     if(!('Notification' in window)) {
+//         alert('This browser does not support notifications.');
+//         return;
+//     }
+//     Notification.requestPermission().then(function (permission) {
+//         if (permission === 'granted') {
+//             console.log('Notifications allowed!');
+//             registerPush();
+//         } else if (permission === 'denied') {
+//             console.warn('Notifications denied by the user.');
+//         } else {
+//             console.log('Notification permission dismissed.');
+//         }
+//     });
+// }
 
-async function registerPush() {
+async function askNotificationPermission() {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         navigator.serviceWorker.register('/service-worker.js', {
             scope: '/',
