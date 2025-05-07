@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,11 +25,14 @@ Route::get('/test-push', function () {
 });
 
 // -----------------------------------Common Routes--------------------------------------------
-Route::get('/', [FrontendController::class, 'index'])->name('index');
 Route::get('/products', [FrontendController::class, 'products'])->name('products');
-Route::get('/user-login', [AuthController::class, 'userLogin'])->name('user-login');
-Route::get('auth/{provider}', [SocialController::class, 'redirect']);
-Route::get('auth/{provider}/callback', [SocialController::class, 'callback']);
+
+Route::middleware(['session_time','checkloggedin'])->group(function() {
+    Route::get('/', [FrontendController::class, 'index'])->name('index');
+    Route::get('/user-login', [AuthController::class, 'userLogin'])->name('user-login');
+    Route::get('auth/{provider}', [SocialController::class, 'redirect']);
+    Route::get('auth/{provider}/callback', [SocialController::class, 'callback']);
+});
 
 
 // ------------------------------------User Routes----------------------------------------------
@@ -38,12 +42,15 @@ Route::middleware(['session_time','ifloggedin'])->group(function () {
     Route::post('place-order', [OrderController::class, 'place_order'])->name('place_order');
     Route::get('/past-orders', [OrderController::class, 'past_orders'])->name('past_orders');
     Route::get('/user-profile', [AuthController::class, 'profile'])->name('profile');
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout-user', [AuthController::class, 'logout'])->name('logout_user');
+    Route::post('/create-payment-order', [PaymentController::class, 'createOrder']);
+    Route::post('/payment-success', [PaymentController::class, 'paymentSuccess']);
 });
 
 
 // -----------------------------------Admin Routes----------------------------------------------
-Route::prefix('admin')->middleware(['session_time','ifloggedin'])->group(function() {
+Route::prefix('admin')->middleware(['session_time','ifadminloggedin'])->group(function() {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin_dashboard');
     Route::get('/order-details/{status_id}', [AdminController::class, 'order_details_by_status'])->name('admin_order_status');
+    Route::get('/logout-admin', [AuthController::class, 'logout'])->name('logout_admin');
 });

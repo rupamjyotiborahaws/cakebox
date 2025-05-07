@@ -24,7 +24,7 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="{{route('profile')}}">Profile</a></li>
               <li><p class="dropdown-item" href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li>
-              <li><a class="dropdown-item" href="{{route('logout')}}">Logout</a></li>
+              <li><a class="dropdown-item" href="{{route('logout_user')}}">Logout</a></li>
             </ul>
           </li>
         @endif

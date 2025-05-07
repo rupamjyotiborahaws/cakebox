@@ -23,15 +23,14 @@ $(document).ready(function() {
             },
             data: {name,email,phone_no},
             success :function(resp){
-                console.log(resp);
                 if(resp.status == 'success'){
                     $('.alert-danger').addClass('d-none');
                     $('.alert-success').removeClass('d-none');
-                    $('.success-msg').text(resp.msg);
+                    $('.success-msg').text(resp.message);
                 } else {
                     $('.alert-danger').removeClass('d-none');
                     $('.alert-success').addClass('d-none');
-                    $('.error-msg').text(resp.msg);
+                    $('.error-msg').text(resp.message);
                 }
             }
         });

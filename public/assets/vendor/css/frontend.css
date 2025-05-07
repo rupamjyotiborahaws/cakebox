@@ -61,4 +61,9 @@
     100% {
         transform: rotate(360deg);
     }
+}
+.alert-msg {
+    font-size: 16px;
+    font-weight: 500;
+    color: green;
 } 

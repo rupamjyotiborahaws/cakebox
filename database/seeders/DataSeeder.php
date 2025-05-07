@@ -40,7 +40,8 @@ class DataSeeder extends Seeder
         DB::table('order_status')->insert([
             ['order_status' => 'Pending'],
             ['order_status' => 'Processing'],
-            ['order_status' => 'Delivered']
+            ['order_status' => 'Delivered'],
+            ['order_status' => 'Cancelled']
         ]);
     }
 }

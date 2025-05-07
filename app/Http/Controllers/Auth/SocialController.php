@@ -7,18 +7,21 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
+use App\Traits\ApiResponse;
 use Auth;
 use App\Models\User;
 
 class SocialController extends Controller
 {
+    use ApiResponse;
+
     public function redirect(Request $request, $provider)
     {
         try {
 	        Cookie::queue('url__', base64_encode($request->url), time() + (60 * 60 * 24 * 1));
             return  Socialite::driver($provider)->stateless()->redirect();
         } catch (\Exception $error) {
-            return response()->json(['message' => 'something went wrong ' . $error->getMessage()]);
+            return $this->error('Something went wrong', 'failed');
         }
     }
 
@@ -49,11 +52,7 @@ class SocialController extends Controller
                     $user->update();
                 }
                 Auth::login($users);
-                // $user = auth()->user()->refresh();
-        	    //     $setdata = json_encode($this->generateObject(
-            	// 	$user->id,
-            	// 	$user->email
-        	    // ));
+                $user = auth()->user()->refresh();
         	    $token = $user->createToken('web_app_token')->plainTextToken;
                 $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
                 $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
@@ -70,6 +69,7 @@ class SocialController extends Controller
 		            'phone_no'	    => ''
                 ]);
                 Auth::login($user);
+                $user = auth()->user()->refresh();
 		        $token = $user->createToken('web_app_token')->plainTextToken;
                 $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
                 $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
@@ -78,13 +78,5 @@ class SocialController extends Controller
         } catch (\Exception $error) {
             return redirect()->away('/');
         }
-    }
-
-    public function generateObject($userId, $userEmail)
-    {
-        return array(
-            'userId'  => $userId,
-            'userEmail' => $userEmail
-        );
     }
 }

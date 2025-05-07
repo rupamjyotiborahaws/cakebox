@@ -71,7 +71,21 @@
         </div>
     </div>
 </div>
-
+<!-- Modal itself -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feedbackModalLabel">Order No. <label class="feedback-order-no"></label></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body feedback-body">
+        Feedback : <p class="feedback-txt"></p><br />
+        Rating : <p class="feedback-rating"></p>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 <script src="{{url('/')}}/assets/vendor/js/jquery.min.js"></script>
 <script src="{{url('/')}}/assets/vendor/js/admin_order_details.js"></script>

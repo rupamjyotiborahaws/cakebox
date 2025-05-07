@@ -9,19 +9,13 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{{route('dashboard')}}">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{route('products')}}">Products</a>
-        </li>
-        @if(Auth::check())
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{route('order')}}">Orders</a>
-          </li>
+        @if(Auth::check() && Auth::user()->isAdmin == 1)
           <li class="nav-item dropdown" style="align:right;">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{Auth::user()->email}}</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><p class="dropdown-item" href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li>
               <li><button class="dropdown-item" onclick="askNotificationPermission()">Enable Notifications</button></li>
-              <li><a class="dropdown-item" href="{{route('logout')}}">Logout</a></li>
+              <li><a class="dropdown-item" href="{{route('logout_admin')}}">Logout</a></li>
             </ul>
           </li>
         @endif

@@ -34,7 +34,7 @@
                         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                     </div>
                     <div class="mb-3">
-                        <input type="submit" class="btn btn-success sign-up d-none" value="Sign Up">
+                        <input type="submit" class="btn btn-success sign-up" value="Sign Up">
                     </div>                    
                     <div class="mb-3">
                         <p>OR</p>

@@ -1,5 +1,5 @@
 "use strict"
-
+let feedbackModal = '';
 $(document).ready(function() {
 
     $(document).on('click', '.see_detail', function(){
@@ -39,14 +39,11 @@ $(document).ready(function() {
                         window.location.reload();
                     }, 2000);
                 } else {
-                    console.log('No Data Found');        
+                    $('#message_'+slno).text(resp.message);        
                 }
             },
             error : function(err) {
                 console.log(err);
-            },
-            complete :function() {
-                
             }
         });
     });
@@ -69,14 +66,45 @@ $(document).ready(function() {
                         window.location.reload();
                     }, 2000);
                 } else {
-                    console.log('No Data Found');        
+                    $('#message_'+slno).text(resp.message);        
                 }
             },
             error : function(err) {
                 console.log(err);
+            }
+        });
+    });
+
+    $(document).on('click', '.view-feedback', function(){
+        let order_no = $(this).data('ord_no');
+        $('.feedback-order-no').text('');
+        $('.feedback-txt').text('');
+        $('.feedback-rating').text('');
+        feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+        $.ajax({
+            url: '/api/v1/get-order-feedback',
+            type:'GET',
+            xhrFields: { withCredentials: true },
+            data: {order_no},
+            headers: {
+                "Accept": "application/json"
             },
-            complete :function() {
-                
+            success :function(resp){
+                let data = JSON.parse(resp.data);
+                if(resp.status == 'success'){ 
+                    $('.feedback-order-no').text(order_no);
+                    $('.feedback-txt').text(data.feedback);
+                    $('.feedback-rating').text(data.rating);
+                    feedbackModal.show();
+                } else {
+                    $('.feedback-order-no').text(order_no);
+                    $('.feedback-txt').text(resp.message);
+                    $('.feedback-rating').text(resp.message);
+                    feedbackModal.show();
+                }
+            },
+            error : function(err) {
+                console.log(err);
             }
         });
     });

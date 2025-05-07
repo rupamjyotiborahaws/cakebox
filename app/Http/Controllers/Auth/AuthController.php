@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use App\Traits\ApiResponse;
 use App\Models\User;
 use Auth;
 
 class AuthController extends Controller
 {    
+    use ApiResponse;
+    
     public function register(Request $request) {
         $user = User::create([
             'name' => $request['name'],
@@ -20,10 +23,6 @@ class AuthController extends Controller
         ]);
         Auth::login($user);
         $user = auth()->user()->refresh();
-        // $setdata = json_encode($this->generateObject(
-        //     $user->id,
-        //     $user->email
-        // ));
         if($user) {
             $token = $user->createToken('web_app_token')->plainTextToken;
             $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
@@ -34,10 +33,7 @@ class AuthController extends Controller
                 'message' => 'Account created successfully.'
             ])->withCookie($cookie1)->withCookie($cookie2);
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Could not create the account.'
-            ]);   
+            return $this->error('Could not create the account', 'failed');   
         }
     }
 
@@ -49,19 +45,11 @@ class AuthController extends Controller
         $user = User::where('email', $request['email'])->first();
         if($user) {
             if (!Auth::attempt($attr)) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Credentials doe not matched.'
-                ]);
+                return $this->error('Credentials does not matched', 'failed');
             }
             $user = auth()->user()->refresh();
             User::where(['id'=>$user->id])->update(['last_login'=>date('Y-m-d H:i:s')]);
-            // $setdata = json_encode($this->generateObject(
-            //     $user->id,
-            //     $user->email
-            // ));
             if($user) {
-                //dd(Auth::user());
                 $token = $user->createToken('web_app_token')->plainTextToken;
                 $cookie1 = Cookie::make('auth_token', $token, 60 * 24 * 7, '/', null, false, true);
                 $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
@@ -71,29 +59,15 @@ class AuthController extends Controller
                     'message' => 'Login successfully.'
                 ])->withCookie($cookie1)->withCookie($cookie2);
             } else {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Could not logged in.'
-                ]);   
+                return $this->error('Could not logged in', 'failed');   
             }
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User not found.'
-            ]);
+            return $this->error('User not found', 'failed');
         }
     }
 
     public function userLogin(Request $request) {
         return view('frontend.login');
-    }
-
-    public function generateObject($userId, $userEmail)
-    {
-        return array(
-            'userId'  => $userId,
-            'userEmail' => $userEmail
-        );
     }
 
     public function dashboard(Request $request) {

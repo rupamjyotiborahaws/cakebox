@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
 use DB;
 use App\Models\Orders;
 use App\Models\OrderStatus;
+use App\Models\Feedback;
 
 class AdminController extends Controller
 {
+    use ApiResponse;
+    
     public function get_orders_for_admin_dashboard(Request $request) {
         $all_status = [];
         $order_count = [];
@@ -29,15 +33,13 @@ class AdminController extends Controller
         $ord_no = $request->order_no;
         $order_processed = Orders::where(['order_no' => $ord_no])->update(['status' => 2]);
         if($order_processed) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Status Updated to order processing'
-            ]);
+            return $this->success('Status Updated to order processing', 'success');
         } else {
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Could not update the order status'
-            ]);    
+            ]);
+            return $this->error('Could not update the order status', 'failed');    
         }
     }
 
@@ -45,15 +47,24 @@ class AdminController extends Controller
         $ord_no = $request->order_no;
         $order_delivered = Orders::where(['order_no' => $ord_no])->update(['status' => 3]);
         if($order_delivered) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Order Delivered'
-            ]);
+            return $this->success('Order Delivered', 'success');
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Could not deliver the order'
-            ]);    
+            return $this->error('Could not deliver the order', 'failed');    
+        }
+    }
+
+    public function get_order_feedback(Request $request) {
+        $ord_no = $request->order_no;
+        $order_id = Orders::where(['order_no' => $ord_no])->get()[0]['id'];
+        $feedback = Feedback::where(['order_id' => $order_id])->get();
+        if(count($feedback) > 0) {
+            $result = json_encode([
+                'feedback' => $feedback[0]['feedback'],
+                'rating' => $feedback[0]['rating']
+            ]);
+            return $this->success('Feedback found','success',$result);
+        } else {
+            return $this->error('No feedback & rating found','failed');    
         }
     }
 }

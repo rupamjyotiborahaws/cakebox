@@ -30,10 +30,15 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     // --------------------------- User APIs -------------------------------
     Route::get('get-my-orders', [UserController::class, 'get_my_orders']);
     Route::post('update-profile', [UserController::class, 'update_profile']);
+    Route::post('submit-feedback', [UserController::class, 'submit_feedback']);
+    Route::post('cancel-order', [UserController::class, 'cancel_order']);
+    Route::get('get-order-info', [UserController::class, 'get_order_info']);
+    Route::post('update-order', [UserController::class, 'update_order']);
 
     // --------------------------- Admin APIs -------------------------------
     Route::get('orders-for-admin-dashboard', [AdminController::class, 'get_orders_for_admin_dashboard']);
     Route::get('process-order', [AdminController::class, 'process_order']);
     Route::get('deliver-order', [AdminController::class, 'deliver_order']);
+    Route::get('get-order-feedback', [AdminController::class, 'get_order_feedback']);
     Route::post('push/subscribe', [PushSubscriptionController::class, 'store']);
 });

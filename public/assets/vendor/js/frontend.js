@@ -12,75 +12,75 @@ $(document).ready(function() {
         }
     });
 
-    $("#phone_no").keyup(function (e) {
-        e.preventDefault();
-        let phone_no = $(this).val();
-        if(phone_no.length == 10) {
-            $.ajax({
-                url: '/api/v1/send-otp',
-                type:'POST',
-                xhrFields: { withCredentials: true },
-                headers: {
-                    "Accept": "application/json"
-                },
-                data: {phone_no},
-                success :function(resp){
-                    if(resp.status == 'success'){ 
-                        otp_id = resp.otp_id;
-                        $('.otp').removeClass('d-none');
-                    } else {
-                        $('.otp').addClass('d-none');    
-                    }
-                },
-                error : function(err) {
-                    $('.otp').addClass('d-none');
-                },
-                complete :function() {
+    // $("#phone_no").keyup(function (e) {
+    //     e.preventDefault();
+    //     let phone_no = $(this).val();
+    //     if(phone_no.length == 10) {
+    //         $.ajax({
+    //             url: '/api/v1/send-otp',
+    //             type:'POST',
+    //             xhrFields: { withCredentials: true },
+    //             headers: {
+    //                 "Accept": "application/json"
+    //             },
+    //             data: {phone_no},
+    //             success :function(resp){
+    //                 if(resp.status == 'success'){ 
+    //                     otp_id = resp.data;
+    //                     $('.otp').removeClass('d-none');
+    //                 } else {
+    //                     $('.otp').addClass('d-none');    
+    //                 }
+    //             },
+    //             error : function(err) {
+    //                 $('.otp').addClass('d-none');
+    //             },
+    //             complete :function() {
                     
-                }
-            });
-        }
-    });
+    //             }
+    //         });
+    //     }
+    // });
 
-    $("#otp").keyup(function (e) {
-        e.preventDefault();
-        let otp = $(this).val();
-        if(otp.length == 6) {
-            $.ajax({
-                url: '/api/v1/validate-otp',
-                type:'POST',
-                xhrFields: { withCredentials: true },
-                headers: {
-                    "Accept": "application/json"
-                },
-                data: {otp,otp_id},
-                success :function(resp){
-                    otp_id = resp.otp_id;
-                    if(resp.status == 'success'){ 
-                        $('.otp_verification_text').addClass('success-msg');
-                        $('.otp_verification_text').removeClass('error-msg');
-                        $('.otp_verification_text').text('OTP is correct.');
-                        //$('.otp').append('<input type="hidden" value='+btoa(otp_id)+' name="otp_id">');
-                        setTimeout(() => {
-                            $('.otp').hide();
-                            $('.sign-up').removeClass('d-none');
-                            $('.sign-up').addClass('d-open');
-                        }, 1000);
-                    } else {
-                        $('.otp_verification_text').addClass('error-msg');
-                        $('.otp_verification_text').removeClass('success-msg');
-                        $('.otp_verification_text').text('OTP is incorrect.');    
-                    }
-                },
-                error : function(err) {
-                    $('.otp').addClass('d-none');
-                },
-                complete :function() {
+    // $("#otp").keyup(function (e) {
+    //     e.preventDefault();
+    //     let otp = $(this).val();
+    //     if(otp.length == 6) {
+    //         $.ajax({
+    //             url: '/api/v1/validate-otp',
+    //             type:'POST',
+    //             xhrFields: { withCredentials: true },
+    //             headers: {
+    //                 "Accept": "application/json"
+    //             },
+    //             data: {otp,otp_id},
+    //             success :function(resp){
+    //                 otp_id = resp.data;
+    //                 if(resp.status == 'success'){ 
+    //                     $('.otp_verification_text').addClass('success-msg');
+    //                     $('.otp_verification_text').removeClass('error-msg');
+    //                     $('.otp_verification_text').text('OTP is correct.');
+    //                     //$('.otp').append('<input type="hidden" value='+btoa(otp_id)+' name="otp_id">');
+    //                     setTimeout(() => {
+    //                         $('.otp').hide();
+    //                         $('.sign-up').removeClass('d-none');
+    //                         $('.sign-up').addClass('d-open');
+    //                     }, 1000);
+    //                 } else {
+    //                     $('.otp_verification_text').addClass('error-msg');
+    //                     $('.otp_verification_text').removeClass('success-msg');
+    //                     $('.otp_verification_text').text('OTP is incorrect.');    
+    //                 }
+    //             },
+    //             error : function(err) {
+    //                 $('.otp').addClass('d-none');
+    //             },
+    //             complete :function() {
                     
-                }
-            });
-        }
-    });
+    //             }
+    //         });
+    //     }
+    // });
 
     $('.sign-up').on('click', function() {
         $('.alert-danger').addClass('d-none');
@@ -142,7 +142,6 @@ $(document).ready(function() {
             },
             data: {email,password},
             success :function(resp){
-                console.log(resp);
                 if(resp.status == 'success') {
                     $('.error-msg').text('');
                     $('.alert-danger').addClass('d-none');

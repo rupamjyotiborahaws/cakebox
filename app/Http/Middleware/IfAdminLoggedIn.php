@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cookie;
 use Auth;
 
-class CheckIfLoggedIn
+class IfAdminLoggedIn
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class CheckIfLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check() && Auth::user()->isAdmin == 0) {
+        if(Auth::check() && Auth::user()->isAdmin == 1) {
             date_default_timezone_set('Asia/Kolkata');
             $last_login = base64_decode($request->cookies->get('last_login'));
             $now = time();
