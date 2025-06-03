@@ -43,6 +43,4 @@ RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-#EXPOSE 80
-
 CMD ["apache2-foreground"]
