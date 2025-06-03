@@ -3,7 +3,7 @@ version: "3.8"
 services:
   app:
     image: rupamjyotiborahaws/cakebox:latest
-    container_name: cakebox-app
+    #container_name: cakebox-app
     ports:
       - "80:80"
       - "443:443"
@@ -29,8 +29,8 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: cakebox-mysql
-    restart: unless-stopped
+    #container_name: cakebox-mysql
+    #restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cakebox
