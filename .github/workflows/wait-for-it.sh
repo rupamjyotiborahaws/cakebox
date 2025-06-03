@@ -3,8 +3,8 @@
 
 set -e
 
-host="mysql"
-port="3306"
+host="$1"
+port="$2"
 shift 2
 cmd="$@"
 

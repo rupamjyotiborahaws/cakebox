@@ -37,6 +37,5 @@ jobs:
             cd /home/rupamjyotiborahaws/cakebox
             docker pull rupamjyotiborahaws/cakebox:latest
             docker stack deploy -c docker-compose.yml cakebox
-            ./wait-for-it.sh
-            CONTAINER_ID=$(docker ps --filter name=cakebox_app --format "{{.ID}}" | head -n1)
-            docker exec $CONTAINER_ID php artisan migrate --force
+            chmod +x ./wait-and-migrate.sh
+            ./wait-and-migrate.sh mysql 3306 php artisan migrate --force
