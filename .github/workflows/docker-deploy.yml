@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /home/rupamjyotiborahaws/cakebox
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d
-            docker exec cakebox-app php artisan migrate --force
+            docker pull rupamjyotiborahaws/cakebox:latest
+            docker stack deploy -c docker-compose.yml cakebox
+            sleep 10
+            docker exec $(docker ps --filter "name=cakebox_app" --format "{{.ID}}" | head -n1) php artisan migrate --force

@@ -2,16 +2,12 @@ version: "3.8"
 
 services:
   app:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
     image: rupamjyotiborahaws/cakebox:latest
     container_name: cakebox-app
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      #- .:/var/www/html
       - ./public:/var/www/html/public
       - ./storage:/var/www/html/storage
       - ./bootstrap:/var/www/html/bootstrap
