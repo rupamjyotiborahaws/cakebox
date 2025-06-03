@@ -37,5 +37,5 @@ jobs:
             cd /home/rupamjyotiborahaws/cakebox
             docker pull rupamjyotiborahaws/cakebox:latest
             docker stack deploy -c docker-compose.yml cakebox
-            chmod +x ./wait-and-migrate.sh
-            ./wait-and-migrate.sh mysql 3306 php artisan migrate --force
+            chmod +x ./wait-for-it.sh
+            ./wait-for-it.sh mysql 3306 php artisan migrate --force
