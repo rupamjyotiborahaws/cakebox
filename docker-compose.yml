@@ -8,22 +8,22 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./public:/var/www/html/public
-      - ./storage:/var/www/html/storage
-      - ./bootstrap:/var/www/html/bootstrap
+      #- ./public:/var/www/html/public
+      #- ./storage:/var/www/html/storage
+      #- ./bootstrap:/var/www/html/bootstrap
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - mysql
     environment:
-      DB_CONNECTION: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: cakebox
-      DB_USERNAME_FILE: /run/secrets/cb_db_username
-      DB_PASSWORD_FILE: /run/secrets/cb_db_password
-    secrets:
-      - cb_db_username
-      - cb_db_password
+      #DB_CONNECTION: mysql
+      #DB_HOST: mysql
+      #DB_PORT: 3306
+      #DB_DATABASE: cakebox
+      #DB_USERNAME_FILE: /run/secrets/cb_db_username
+      #DB_PASSWORD_FILE: /run/secrets/cb_db_password
+    #secrets:
+     # - cb_db_username
+     # - cb_db_password
     networks:
       - cakebox-net
 
@@ -46,11 +46,11 @@ services:
 volumes:
   cakeboxdbdata:
 
-secrets:
-  cb_db_username:
-    external: true
-  cb_db_password:
-    external: true
+#secrets:
+  #cb_db_username:
+    #external: true
+  #cb_db_password:
+    #external: true
 
 networks:
   cakebox-net:
