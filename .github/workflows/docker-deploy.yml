@@ -39,4 +39,3 @@ jobs:
             docker pull rupamjyotiborahaws/cakebox:latest
             docker-compose pull
             docker-compose up -d
-            docker exec cakebox-app php artisan migrate --force
