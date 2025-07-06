@@ -37,5 +37,4 @@ jobs:
             cd /home/rupamjyotiborahaws/projects/cakebox
             git pull origin master
             docker pull rupamjyotiborahaws/cakebox:latest
-            docker-compose pull
-            docker-compose up -d
+            docker-compose up -d --force-recreate
