@@ -3,7 +3,7 @@ version: "3.8"
 services:
   app:
     image: rupamjyotiborahaws/cakebox:latest
-    #container_name: cakebox-app
+    container_name: cakebox-app
     ports:
       - "80:80"
       - "443:443"
