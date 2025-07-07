@@ -13,6 +13,7 @@ services:
       #- ./bootstrap:/var/www/html/bootstrap
       - /etc/letsencrypt:/etc/letsencrypt:ro
       #- .:/var/www/html/
+      - ./.env:/var/www/html/.env
     depends_on:
       - mysql
     #environment:
