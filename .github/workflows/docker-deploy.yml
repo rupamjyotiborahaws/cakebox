@@ -34,8 +34,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /home/rupamjyotiborahaws/cakebox
+            cd /home/rupamjyotiborahaws/projects/cakebox
+            git pull origin master
             docker pull rupamjyotiborahaws/cakebox:latest
-            docker stack deploy -c docker-compose.yml cakebox
-            chmod +x ./wait-for-it.sh
-            ./wait-for-it.sh mysql 3306 php artisan migrate --force
+            docker-compose up -d --force-recreate
