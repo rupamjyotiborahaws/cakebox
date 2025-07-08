@@ -38,4 +38,8 @@ jobs:
             git pull origin master
             docker pull rupamjyotiborahaws/cakebox:latest
             docker-compose up -d --force-recreate
+            until docker exec cakebox-app mysqladmin ping -hmysql -ucakebox -pcakebox!2025 --silent; do
+              echo "Waiting for MySQL to be ready..."
+              sleep 5
+            done
             docker exec cakebox-app php artisan migrate --force
