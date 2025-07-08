@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'cakebox'@'%' IDENTIFIED BY 'cakebox!2025';
+GRANT ALL PRIVILEGES ON cakebox.* TO 'cakebox'@'%';
+FLUSH PRIVILEGES;

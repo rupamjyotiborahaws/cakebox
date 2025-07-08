@@ -31,7 +31,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    #container_name: cakebox-mysql
+    container_name: cakebox-mysql
     #restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -42,6 +42,7 @@ services:
       - "3306:3306"
     volumes:
       - cakeboxdbdata:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
     networks:
       - cakebox-net
 
