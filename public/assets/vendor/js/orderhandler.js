@@ -210,10 +210,21 @@ $(document).on('click', '.modify', function() {
             if(resp.status == 'success'){
                 console.log(resp.data);
                 let result = resp.data.result[0];
+                let occassion_types = ['Birthday','Engagement','Wedding','Wedding Anniversary','New store/office/institute/organization opening'];
                 $('#o_id').val(result.oid);
                 let html = '<p style="font-size:16px; font-weight:500; color: green; text-align:center;" class="msg-success d-none;"></p>';
                 html += '<p style="font-size:16px; font-weight:500; color: red; text-align:center;" class="msg-error d-none;"></p>';
-                html += '<div class="row" style="margin-bottom:10px;"><div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Occassion</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12"><input type="text" class="form-control" name="occassion" id="occassion" value="'+result.occassion+'" /></div></div>';
+                html += '<div class="row" style="margin-bottom:10px;">';
+                html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Occassion</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
+                html += '<select class="form-control" name="occassion" id="occassion">';
+                html += '<option value="'+result.occassion+'">'+result.occassion+'</option>';
+                occassion_types.forEach(otype => {
+                    if(otype != result.occassion) {
+                        html += '<option value="'+otype+'">'+otype+'</option>';    
+                    }
+                });
+                html += '</select></div></div>';
+                //html += '<input type="text" class="form-control" name="occassion" id="occassion" value="'+result.occassion+'" /></div></div>';
                 html += '<div class="row" style="margin-bottom:10px;">';
                 html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Cake Type</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
                 html += '<select class="form-control" name="cake_type" id="cake_type">';
