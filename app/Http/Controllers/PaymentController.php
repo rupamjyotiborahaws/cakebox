@@ -29,7 +29,7 @@ class PaymentController extends Controller
                 'order_id' => $razorpayOrder['id']
             ]);
         } catch (\Razorpay\Api\Errors\Base $e) {
-            \Log::error('Razorpay Order Creation Error: ' . $e->getMessage());
+            //\Log::error('Razorpay Order Creation Error: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'message' => 'Order could not be created. Please try again.'
@@ -52,7 +52,7 @@ class PaymentController extends Controller
                 'razorpay_signature' => $request->signature
             ];
             $api->utility->verifyPaymentSignature($attributes);
-            \Log::info('Razorpay payment verified', $attributes);
+            //\Log::info('Razorpay payment verified', $attributes);
             $payment = Payment::where(['order_id'=>$request->order_no,'payment_order_id'=>$request->payment_order_id])->first();
             if($payment) {
                 $payment->status = "paid";
@@ -65,10 +65,10 @@ class PaymentController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Payment failed! Order No. does not exists.'], 400);
             }
         } catch (\Razorpay\Api\Errors\SignatureVerificationError $e) {
-            \Log::error('Razorpay Signature Verification Failed: ' . $e->getMessage());
+            //\Log::error('Razorpay Signature Verification Failed: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Payment verification failed.'], 400);
         } catch (\Exception $e) {
-            \Log::error('Razorpay Unknown Error: ' . $e->getMessage());
+            //\Log::error('Razorpay Unknown Error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Payment failed! Something went wrong.'], 500);
         }
     }
