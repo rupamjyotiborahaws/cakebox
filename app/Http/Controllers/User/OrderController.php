@@ -42,12 +42,12 @@ class OrderController extends Controller
         $cake_weight  = $request->cake_weight;
         $cake_instruction  = trim($request->cake_instruction);
         $delivery_datetime = Carbon::parse($request->cake_delivery_date . ' ' . $request->cake_delivery_time);
-        $total_amount = 0.00;
+        $total_amount = 1.00;
         $fileUrl = true;
         $filePath = '';
         $cake_type_name = Type::where(['id'=>$cake_type])->get()[0]['cake_type'];
         $cake_weight_desc = Weight::where(['id'=>$cake_weight])->get()[0]['cake_weight'];
-        if($cake_type_name == 'Chocolate') {
+        /*if($cake_type_name == 'Chocolate') {
             if($cake_weight_desc == '250GM') {
                 $total_amount = 300.00;    
             } else if($cake_weight_desc == '500GM') {
@@ -71,7 +71,7 @@ class OrderController extends Controller
             } else if($cake_weight_desc == '2KG') {
                 $total_amount = 1500.00;    
             }    
-        }
+        }*/
         if($request->hasFile('image')) {
             $request->validate([
                 'image' => 'file|mimes:jpg,jpeg,png,svg|max:2048',
