@@ -45,6 +45,8 @@ Route::middleware(['session_time','ifloggedin'])->group(function () {
     Route::get('/logout-user', [AuthController::class, 'logout'])->name('logout_user');
     Route::post('/create-payment-order', [PaymentController::class, 'createOrder']);
     Route::post('/payment-success', [PaymentController::class, 'paymentSuccess']);
+    Route::get('/check-status', [PaymentController::class, 'checkOrderStatus']);
+    Route::post('/razorpay/paymentwebhook', [PaymentController::class, 'webhookHandler']);
 });
 
 

@@ -130,14 +130,15 @@
                         "key": "{{ env('RAZORPAY_KEY') }}",
                         "amount": amount,
                         "currency": "INR",
-                        "name": "CakeBox Demo",
-                        "description": "Test Transaction",
+                        "name": "CakeBox",
+                        "description": "Payment for CakeBox",
                         "order_id": data.order_id,
                         "handler": function (response) {
                             $.post('/payment-success', {
                                 order_no: order_no,
                                 payment_order_id: options.order_id,
                                 payment_id: response.razorpay_payment_id,
+                                signature: response.razorpay_signature,
                                 _token: '{{ csrf_token() }}'
                             }, function(res) {
                                 if(res.status == 'success') {
@@ -150,7 +151,7 @@
                                       window.location.reload();
                                     }, 2000);
                                 } else {
-                                    alert("Payment could not be recorded in database!");
+                                    alert(res.message);
                                 }
                             });
                             //alert("Payment successful! ID: " + response.razorpay_payment_id);
@@ -170,10 +171,29 @@
                         },
                         "theme": {
                             "color": "#3399cc"
+                        },
+                        "modal": {
+                            "ondismiss": function () {
+                                alert("Payment cancelled");
+                            }
                         }
                     };
                     var rzp = new Razorpay(options);
+                    rzp.on('payment.failed', function (response) {
+                      alert("Payment Failed: " + response.error.description);
+                    });
                     rzp.open();
+                    // Start polling for QR/UPI payment
+                    let interval = setInterval(() => {
+                        fetch('/check-status?order_id='+data.order_id)
+                          .then(r => r.json())
+                          .then(d => {
+                              if (d.status === 'paid') {
+                                  alert("Payment successful (via QR)");
+                                  clearInterval(interval);
+                              }
+                          });
+                    }, 5000);
                 },
                 error : function(err) {
                   console.log(err);
