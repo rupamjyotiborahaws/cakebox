@@ -48,6 +48,8 @@
                                                 <p style="width:auto;">Instruction (if any): {{$order['instruction']}}</p>
                                                 <p style="width:auto;">Total amount : {{$order['total_amount']}}</p>
                                                 <p style="width:auto;">Amount paid : {{$order['amount_paid']}}</p>
+                                                <p style="width:auto;">Payment Order ID : {{$order['payment_order_id']}}</p>
+                                                <p style="width:auto;">Razorpay Payment ID : {{$order['payment_id']}}</p>
                                                 @if($status_id == 1)
                                                     <button class="btn btn-warning process-order" data-id="{{$slno}}" data-ord_no="{{$order['order_no']}}" style="width:150px;">Process Order</button><br />
                                                 @elseif($status_id == 2)

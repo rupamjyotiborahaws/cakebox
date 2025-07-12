@@ -27,8 +27,15 @@
 .card-color-delivered {
     background-color:#1d9311;
 }
+.card-color-cancelled {
+    background-color:#404240;
+}
 .see_detail {
     cursor: pointer;
+}
+
+.admin-dashboard-divs {
+    margin-top: 20px;
 }
 
 @media only screen and (min-width: 200px) and (max-width: 767px) {

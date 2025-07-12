@@ -79,6 +79,20 @@
   </div>
 </div>
 
+<div class="modal fade" id="cannotCancelModal" tabindex="-1" aria-labelledby="cannotCancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cannotCancelModalLabel">Order No. <label class="cannotcancel-order-no"></label></h5>
+      </div>
+      <div class="modal-body cannotcancel-body">
+        <p id="cannotcancel-msg"></p><br />
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close" style="float:right;">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="cancelConfirmModal" tabindex="-1" aria-labelledby="cancelConfirmModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">

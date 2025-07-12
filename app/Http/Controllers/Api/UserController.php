@@ -31,7 +31,7 @@ class UserController extends Controller
     
     public function get_my_orders(Request $request) {
         $result = [];
-        $orders = Orders::whereIn('status',[1,2,3])->select('*')->orderBy('order_date','DESC')->get();
+        $orders = Orders::where(['user_id' => Auth::user()->id])->whereIn('status',[1,2,3])->select('*')->orderBy('order_date','DESC')->get();
         foreach ($orders as $key => $value) {
             $cake_name = Type::where(['id'=>$value['cake_type']])->get()[0]['cake_type']; 
             $cake_weight = Weight::where(['id'=>$value['weight']])->get()[0]['cake_weight'];

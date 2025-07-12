@@ -37,6 +37,8 @@ function loadDashboard(all_status, order_count) {
             card += '<div class="card-title dashboard-cards-title card-color-processing">';
         } else if(status.order_status == 'Delivered') {
             card += '<div class="card-title dashboard-cards-title card-color-delivered">';
+        } else if(status.order_status == 'Cancelled') {
+            card += '<div class="card-title dashboard-cards-title card-color-cancelled">';
         }
         card += '<p class="dashboard-card-title-text">'+status.order_status+'</p>';
         card += '</div>';          

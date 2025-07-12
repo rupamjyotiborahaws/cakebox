@@ -5,6 +5,7 @@ let feedbackModal = '';
 let feedback_slid = '';
 let cancelModal = '';
 let modifyModal = '';
+let cannotcancelModal = '';
 function loadDataIntoTable(data) {
     let html_data = '';
     let slno = 1;
@@ -15,6 +16,14 @@ function loadDataIntoTable(data) {
         let update_btn = '';
         //const o_date = new Date(data[i].order_date);
         const d_date = new Date(data[i].delivery_date_time);
+        let hours = d_date.getHours();
+        let minutes = d_date.getMinutes().toString().padStart(2, '0');
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Convert 0 to 12
+        hours = hours.toString().padStart(2, '0');
+        let time = `${hours}:${minutes} ${ampm}`;
+        console.log(time);
         let img_url = '';
         if(data[i].design_reference != '') {
             img_url += '<p style="width:300px;"><a href='+base_origin+'/storage/'+data[i].design_reference+' target="_blank">Your uploaded design</a></p>';
@@ -29,9 +38,9 @@ function loadDataIntoTable(data) {
         else if(data[i].status == 2){ html_data += '<td style="width:40%;">Processing</td></tr>';}
         else if(data[i].status == 3){ html_data += '<td style="width:40%;">Delivered</td></tr>';}
         html_data += '<tr class="show_detail d-none" id="order_'+slno+'">';
-        html_data += '<td style="width:100%;"><p style="width:300px;">Cake : '+data[i].cake_type+'</p><p style="width:300px;">Flavor : '+data[i].cake_flavor+'</p><p style="width:300px;">Weight: '+data[i].cake_weight+'</p><p style="width:300px;">Delivery on: '+d_date.getDate()+' '+months[d_date.getMonth()]+', '+d_date.getFullYear()+'</p><p style="width:300px;">Total amount : '+data[i].total_amount+'</p><p id="amount_paid_'+slno+'" style="width:300px;">Amount Paid : '+data[i].amount_paid+'</p><p id="amount_to_be_paid_'+slno+'" style="width:300px;">Amount to be paid : '+data[i].amount_to_be_paid+' '+pay_btn+'</p><p style="width:300px;" id="payment_id_'+slno+'">Payment ID : '+data[i].payment_id+'</p>';
+        html_data += '<td style="width:100%;"><p style="width:300px;">Cake : '+data[i].cake_type+'</p><p style="width:300px;">Flavor : '+data[i].cake_flavor+'</p><p style="width:300px;">Weight: '+data[i].cake_weight+'</p><p style="width:300px;">Delivery on: '+d_date.getDate()+' '+months[d_date.getMonth()]+', '+d_date.getFullYear()+' '+time+'</p><p style="width:300px;">Total amount : '+data[i].total_amount+'</p><p id="amount_paid_'+slno+'" style="width:300px;">Amount Paid : '+data[i].amount_paid+'</p><p id="amount_to_be_paid_'+slno+'" style="width:300px;">Amount to be paid : '+data[i].amount_to_be_paid+' '+pay_btn+'</p><p style="width:300px;" id="payment_id_'+slno+'">Payment ID : '+data[i].payment_id+'</p>';
         if(data[i].status == 1) {
-            cancel_btn += '<button type="button" class="btn btn-danger btn-sm cancel" data-order="'+data[i].order_no+'" data-id="cancel_btn_'+slno+'" id="cancel_btn_'+slno+'">Cancel Order</button>';
+            cancel_btn += '<button type="button" class="btn btn-danger btn-sm cancel" data-order="'+data[i].order_no+'" data-id="cancel_btn_'+slno+'" id="cancel_btn_'+slno+'" data-ddate="'+data[i].delivery_date_time+'" data-dtime="'+time+'">Cancel Order</button>';
             update_btn += '<button type="button" class="btn btn-success btn-sm modify" style="margin-left:20px;" data-order="'+data[i].order_no+'" data-id="modify_btn_'+slno+'" id="modify_btn_'+slno+'">Modify Order</button>';        
         }
         if(data[i].status == 3 && data[i].feedback == '') {
@@ -144,14 +153,30 @@ $(document).on('click', '.feedback-submit', function() {
 
 $(document).on('click', '.cancel', function() {
     $('.cancel-order-no').text('');
+    $('.cannotcancel-order-no').text('');
     $('.cancel-body').find('.cancel_order').remove();
+    $('#cannotcancel-msg').text('');
     let order_id = $(this).data('order');
     let id = $(this).data('id');
-    $('.cancel-order-no').text(order_id);
-    let yes_btn = '<button type="button" class="btn btn-danger cancel_order" data-order="'+order_id+'" data-id="'+id+'" style="float:left;">Yes</button>';
-    $('.cancel-body').append(yes_btn);
-    cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
-    cancelModal.show();
+    let ddate = $(this).data('ddate');
+    let deltime = $(this).data('dtime');
+    const deliveryDate = new Date(ddate);
+    const today = new Date();
+    const timeDiff = deliveryDate - today;
+    const diffInHours = Math.floor(timeDiff / (1000 * 60 * 60));
+    if(diffInHours <= 24){
+        $('.cannotcancel-order-no').text(order_id);
+        let del_date = deliveryDate.getDate()+' '+months[deliveryDate.getMonth()]+', '+deliveryDate.getFullYear();
+        $('#cannotcancel-msg').text(`Orders can only be cancelled at least 24 hours before the scheduled delivery time. Since your order is scheduled for delivery at ${deltime} on ${del_date}, it can no longer be cancelled`);
+        cannotcancelModal = new bootstrap.Modal(document.getElementById('cannotCancelModal'));
+        cannotcancelModal.show();    
+    } else {
+        $('.cancel-order-no').text(order_id);
+        let yes_btn = '<button type="button" class="btn btn-danger cancel_order" data-order="'+order_id+'" data-id="'+id+'" style="float:left;">Yes</button>';
+        $('.cancel-body').append(yes_btn);
+        cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+        cancelModal.show();
+    }
 });
 
 $(document).on('click', '.cancel_order', function() {

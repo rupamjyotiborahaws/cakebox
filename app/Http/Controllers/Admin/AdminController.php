@@ -22,7 +22,7 @@ class AdminController extends Controller
         ->where(['orders.status' => $status_id])
         ->select('orders.occassion', 'orders.order_date', 'orders.delivery_date_time','orders.instruction',
         'orders.design_reference','orders.order_no','types.cake_type as cakeType', 'flavors.flavor_name as flavorName', 
-        'weight.cake_weight as cakeWeight','payments.total_amount','payments.amount_paid')
+        'weight.cake_weight as cakeWeight','payments.total_amount','payments.amount_paid','payments.payment_order_id','payments.payment_id')
         ->get();
 
         foreach ($order_det as $key => $order_value) {
@@ -36,7 +36,9 @@ class AdminController extends Controller
             $order_data[$key]['cakeWeight'] = $order_value['cakeWeight'];
             $order_data[$key]['order_no'] = $order_value['order_no'];  
             $order_data[$key]['total_amount'] = $order_value['total_amount'];
-            $order_data[$key]['amount_paid'] = $order_value['amount_paid']; 
+            $order_data[$key]['amount_paid'] = $order_value['amount_paid'];
+            $order_data[$key]['payment_order_id'] = $order_value['payment_order_id']; 
+            $order_data[$key]['payment_id'] = $order_value['payment_id'];  
         }
         return view('admin.order_details',compact('order_data','status_id'));
     }

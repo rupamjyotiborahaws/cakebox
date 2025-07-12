@@ -17,7 +17,7 @@
             <a class="nav-link active" aria-current="page" href="{{route('order')}}">Place an Order</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{route('past_orders')}}">Past Orders</a>
+            <a class="nav-link active" aria-current="page" href="{{route('your_orders')}}">Your Orders</a>
           </li>
           <li class="nav-item dropdown" style="align:right;">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{Auth::user()->email}}</a>

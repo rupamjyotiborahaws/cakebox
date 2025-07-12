@@ -1,4 +1,17 @@
 # Build stage
+FROM node:1 AS node_builder
+
+WORKDIR /app
+
+# Copy only package files first for caching
+COPY package*.json ./
+RUN npm ci
+
+# Copy entire Laravel app
+COPY . .
+
+# Build frontend assets using Vite
+RUN npm run build
 
 FROM composer:2 AS builder
 
@@ -21,11 +34,14 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite ssl headers
 
+# Set working directory
+WORKDIR /var/www/html
+
 # Copy app from builder stage
 COPY --from=builder /app /var/www/html
 
-# Set working directory
-WORKDIR /var/www/html
+# Copy compiled assets (public/build) from node stage
+COPY --from=node_builder /app/public/build /var/www/html/public/build
 
 # Copy custom Apache virtual host config
 COPY apache/000-default.conf /etc/apache2/sites-available/000-default-ssl.conf
