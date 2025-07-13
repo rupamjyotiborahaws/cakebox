@@ -15,14 +15,14 @@ class AdminController extends Controller
     public function order_details_by_status(Request $request, $status_id) {
         $status_id = $request->status_id;
         $order_data = [];
-        $order_det = Orders::join('types', 'orders.cake_type', '=', 'types.id')
-        ->join('flavors', 'orders.flavor', '=', 'flavors.id')
-        ->join('weight', 'orders.weight', '=', 'weight.id')
-        ->join('payments', 'orders.order_no', '=', 'payments.order_id')
+        //$order_det = Orders::join('types', 'orders.cake_type', '=', 'types.id')
+        //->join('flavors', 'orders.flavor', '=', 'flavors.id')
+        //->join('weight', 'orders.weight', '=', 'weight.id')
+        $order_det = Orders::join('payments', 'orders.order_no', '=', 'payments.order_id')
         ->where(['orders.status' => $status_id])
         ->select('orders.occassion', 'orders.order_date', 'orders.delivery_date_time','orders.instruction',
-        'orders.design_reference','orders.order_no','types.cake_type as cakeType', 'flavors.flavor_name as flavorName', 
-        'weight.cake_weight as cakeWeight','payments.total_amount','payments.amount_paid','payments.payment_order_id','payments.payment_id')
+        'orders.design_reference','orders.order_no','orders.cake_type as cakeType', 'orders.flavor as flavorName', 
+        'orders.weight as cakeWeight','payments.total_amount','payments.amount_paid','payments.payment_order_id','payments.payment_id')
         ->get();
 
         foreach ($order_det as $key => $order_value) {

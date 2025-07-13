@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use App\Services\TwilioService;
 use App\Traits\ApiResponse;
 use App\Notifications\NewOrderNotification;
@@ -33,16 +35,16 @@ class UserController extends Controller
         $result = [];
         $orders = Orders::where(['user_id' => Auth::user()->id])->whereIn('status',[1,2,3])->select('*')->orderBy('order_date','DESC')->get();
         foreach ($orders as $key => $value) {
-            $cake_name = Type::where(['id'=>$value['cake_type']])->get()[0]['cake_type']; 
-            $cake_weight = Weight::where(['id'=>$value['weight']])->get()[0]['cake_weight'];
-            $cake_flavor = Flavor::where(['id'=>$value['flavor']])->get()[0]['flavor_name'];
+            //$cake_name = Type::where(['id'=>$value['cake_type']])->get()[0]['cake_type']; 
+            //$cake_weight = Weight::where(['id'=>$value['weight']])->get()[0]['cake_weight'];
+            //$cake_flavor = Flavor::where(['id'=>$value['flavor']])->get()[0]['flavor_name'];
             $payment_info = Payment::where(['order_id'=>$value['order_no']])->first();
             $feedback_info = Feedback::where(['order_id'=>$value['id']])->get();
             $result[$key]['order_date'] = $value['order_date'];
             $result[$key]['status'] = $value['status'];
-            $result[$key]['cake_type'] = $cake_name;
-            $result[$key]['cake_weight'] = $cake_weight;
-            $result[$key]['cake_flavor'] = $cake_flavor;
+            $result[$key]['cake_type'] = $value['cake_type'];
+            $result[$key]['cake_weight'] = $value['weight'];
+            $result[$key]['cake_flavor'] = $value['flavor'];
             $result[$key]['delivery_date_time'] = $value['delivery_date_time'];
             $result[$key]['order_no'] = $value['order_no'];
             $result[$key]['design_reference'] = $value['design_reference'];
@@ -144,24 +146,14 @@ class UserController extends Controller
     public function get_order_info(Request $request) {
         $return_data = [];
         $del_datetime = $del_date = $del_time = '';
-        $order_info = Orders::join('flavors', 'orders.flavor', '=', 'flavors.id')
-                    ->join('weight', 'orders.weight', '=', 'weight.id')
-                    ->join('types', 'orders.cake_type', '=', 'types.id')
-                    ->where(['order_no' => $request->order_no])
-                    ->select('orders.id as oid', 'orders.occassion', 'orders.delivery_date_time','orders.instruction','orders.design_reference','types.cake_type','types.id as typeid', 
-                            'flavors.flavor_name', 'flavors.id as flavorid', 'weight.cake_weight', 'weight.id as weightid')
-                    ->get();
+        $order_info = Orders::where(['order_no' => $request->order_no])
+                    ->select('orders.id as oid', 'orders.occassion', 'orders.delivery_date_time','orders.instruction','orders.design_reference','orders.cake_type', 
+                            'orders.flavor', 'orders.weight')->get();
         $del_datetime = explode(" ", $order_info[0]['delivery_date_time']);
         $del_date = $del_datetime[0];
         $del_time = $del_datetime[1];
         if($order_info) {
-            $types = Type::all();
-            $weights = Weight::all();
-            $flavors = Flavor::all();
             $return_data['result'] = $order_info;
-            $return_data['types'] = $types;
-            $return_data['weights'] = $weights;
-            $return_data['flavors'] = $flavors;
             $return_data['del_date'] = $del_date;
             $return_data['del_time'] = $del_time;
             return $this->success('Order data found','success', $return_data);
@@ -181,31 +173,88 @@ class UserController extends Controller
         $total_amount = 0.00;
         $fileUrl = true;
         $filePath = '';
-        $cake_type_name = Type::where(['id'=>$cake_type])->get()[0]['cake_type'];
-        $cake_weight_desc = Weight::where(['id'=>$cake_weight])->get()[0]['cake_weight'];
-        if($cake_type_name == 'Chocolate') {
-            if($cake_weight_desc == '250GM') {
-                $total_amount = 300.00;    
-            } else if($cake_weight_desc == '500GM') {
-                $total_amount = 450.00;    
-            } else if($cake_weight_desc == '1KG') {
-                $total_amount = 900.00;    
-            } else if($cake_weight_desc == '1.5KG') {
-                $total_amount = 1350.00;    
-            } else if($cake_weight_desc == '2KG') {
-                $total_amount = 1750.00;    
+        $error = '';
+        $caketypes = ['Chocolate','Vanilla'];
+        $cakeSelected = '';
+        $found = false;
+        foreach($caketypes as $caketype) {
+            if(stripos($cake_type, $caketype) !== false) {
+                $found = true;
+                $cakeSelected = $caketype;
+                break;
+            }
+        }
+        if($found) {
+            if(preg_match('/\b' . preg_quote($cakeSelected, '/') . '\b/i', $cake_type, $matches)) {
+                $cake_type = strtolower($matches[0]);
             }
         } else {
-            if($cake_weight_desc == '250GM') {
+            if($error == '') {
+                $error = 'Please provide a valid cake (Chocolate or Vanilla)';
+            } else {
+                $error .= ', cake (Chocolate or Vanilla)';
+            }
+        }
+        if (preg_match('/\d+\s*(gm|kg|GM|KG|Gm|Kg)\b/i', $cake_weight, $matches)) {
+            $cake_weight = strtoupper($cake_weight);
+        } 
+        else {
+            if($error == '') {
+                $error = 'Please provide a valid cake weight. For example 500 gm, 1 kg etc.';
+            } else {
+                $error .= ', valid cake weight. For example 500 gm, 1 kg etc.';
+            }
+        }
+        if($error != "") {
+            return redirect()->back()->with(['error' => $error])->withInput();
+        }
+        if($cake_type == 'chocolate') {
+            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
+                $total_amount = 300.00;    
+            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
+                $total_amount = 450.00;    
+            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
+                $total_amount = 900.00;    
+            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
+                $total_amount = 1350.00;    
+            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
+                $total_amount = 1750.00;    
+            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+                $total_amount = 2000.00;    
+            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+                $total_amount = 2400.00;    
+            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+                $total_amount = 2800.00;    
+            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+                $total_amount = 3500.00;    
+            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+                $total_amount = 4000.00;    
+            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+                $total_amount = 4500.00;    
+            }
+        } else {
+            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
                 $total_amount = 250.00;    
-            } else if($cake_weight_desc == '500GM') {
+            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
                 $total_amount = 400.00;    
-            } else if($cake_weight_desc == '1KG') {
+            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
                 $total_amount = 800.00;    
-            } else if($cake_weight_desc == '1.5KG') {
+            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
                 $total_amount = 1150.00;    
-            } else if($cake_weight_desc == '2KG') {
+            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
                 $total_amount = 1500.00;    
+            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+                $total_amount = 1800.00;    
+            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+                $total_amount = 2200.00;    
+            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+                $total_amount = 2600.00;    
+            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+                $total_amount = 3000.00;    
+            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+                $total_amount = 3300.00;    
+            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+                $total_amount = 3600.00;    
             }    
         }
         if($request->hasFile('image')) {
@@ -219,12 +268,12 @@ class UserController extends Controller
         }
         if($fileUrl) {
             $order = [
-                'occassion' => $occassion,
-                'cake_type' => $cake_type,
-                'flavor' => $cake_flavor,
-                'weight' => $cake_weight,
+                'occassion' => strtoupper($occassion),
+                'cake_type' => strtoupper($cake_type),
+                'flavor' => $cake_flavor == null ? 'Not Available' : strtoupper($cake_flavor),
+                'weight' => strtoupper($cake_weight),
                 'delivery_date_time' => $delivery_datetime,
-                'instruction' => $cake_instruction == null || $cake_instruction == "" ? "Not Available" : $cake_instruction,
+                'instruction' => $cake_instruction == null || $cake_instruction == "" ? "Not Available" : strtoupper($cake_instruction),
                 'design_reference' => $filePath,
             ];
             $check_order = Orders::where(['id' => $o_id])->get();
@@ -264,5 +313,214 @@ class UserController extends Controller
         } else {
             return $this->error('Uploaded file could not be saved','failed');
         }
+    }
+
+    public function voice_order(Request $request)
+    {
+        if(!$request->hasFile('audio')) {
+            return response()->json(['error' => 'No audio file uploaded'], 400);
+        }
+        $file = $request->file('audio');
+        $tempPath = $file->storeAs('temp', uniqid() . '.webm');
+        $filePath = storage_path("app/{$tempPath}");
+        // Send to Whisper API
+        $response = Http::withToken(env('OPENAI_API_KEY'))->attach('file', fopen($filePath, 'r'), 'voice.webm')->post('https://api.openai.com/v1/audio/transcriptions',[
+                'model' => 'whisper-1',
+                'response_format' => 'json',
+                'language' => 'en',
+        ]);
+        // Clean up
+        Storage::delete($tempPath);
+        if($response->successful()) {
+            $transcribedText = $response->json()['text'];
+            $error = "";
+            // Step 2: Parse using GPT
+            $prompt = <<<PROMPT
+            Convert the following cake order into JSON format with keys:
+            - occassion
+            - cake    
+            - flavor
+            - weight
+            - message_on_cake
+            - delivery_date_time (in ISO format)
+            - quantity
+            User said: "{$transcribedText}"
+            If something is missing, leave it blank.
+            PROMPT;
+            $gptResponse = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are a cake order extraction assistant.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+            ]);
+            if(!$gptResponse->successful()) {
+                return response()->json(['error' => 'Could not understand your order. Kindly specify Occassion, Cake, Flavor, Weight, Delivery Date and Time, Special message on the cake'], 500);
+            }
+            $orderData = json_decode($gptResponse->json()['choices'][0]['message']['content'], true);
+
+            if($orderData['occassion'] == "") {
+                if($error == "") {
+                    $error = "Tell me the Occassion";
+                } else {
+                    $error .= ", Occassion";    
+                }
+            }
+            if($orderData['cake'] == "") {
+                if($error == "") {
+                    $error = "Tell me the cake (Chocolate/Vanilla)";
+                } else {
+                    $error .= ", Cake (Chocolate/Vanilla)";    
+                }
+            }
+            if($orderData['weight'] == "") {
+                if($error == "") {
+                    $error = "Tell me size of the cake you need (250gm/500gm/1kg etc. (Max 5kg))";
+                } else {
+                    $error .= ", Size of the cake you need (250gm/500gm/1kg etc. (Max 5kg))";    
+                }
+            }
+            if($orderData['delivery_date_time'] == "") {
+                if($error == "") {
+                    $error = "Tell me when you need this to be delivered (Date & Time)";
+                } else {
+                    $error .= ", Delivery date & time";    
+                }
+            }
+
+            if($error != "") {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $error
+                ]);
+            } else {
+                $total_amount = 1.00;
+                $error = '';
+                $caketypes = ['Chocolate','Vanilla'];
+                $cakeSelected = '';
+                $found = false;
+                foreach($caketypes as $caketype) {
+                    if(stripos($orderData['cake'], $caketype) !== false) {
+                        $found = true;
+                        $cakeSelected = $caketype;
+                        break;
+                    }
+                }
+                if($found) {
+                    if(preg_match('/\b' . preg_quote($cakeSelected, '/') . '\b/i', $orderData['cake'], $matches)) {
+                        $orderData['cake'] = strtolower($matches[0]);
+                    }
+                } else {
+                    if($error == '') {
+                        $error = 'Tell me which cake (Chocolate or Vanilla)';
+                    } else {
+                        $error .= '& which cake (Chocolate or Vanilla)';
+                    }
+                }
+                if (preg_match('/\d+\s*(gm|kg|GM|KG|Gm|Kg|gram|kilogram|Gram|Kilogram|GRAM|KILOGRAM)\b/i', $orderData['weight'], $matches)) {
+                    $orderData['weight'] = strtoupper($orderData['weight']);
+                } 
+                else {
+                    if($error == '') {
+                        $error = 'Tell a valid cake weight (250gm/500gm/1kg/1.5kg/2kg/2.5kg/3kg/3.5kg/4kg/4.5kg/5kg (Max 5kg))';
+                    } else {
+                        $error .= '& valid cake weight (250gm/500gm/1kg/1.5kg/2kg/2.5kg/3kg/3.5kg/4kg/4.5kg/5kg (Max 5kg))';
+                    }
+                }
+                if($error != "") {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $error
+                    ]);
+                }
+                if($orderData['cake'] == 'chocolate') {
+                    if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
+                        $total_amount = 300.00;    
+                    } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
+                        $total_amount = 450.00;    
+                    } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
+                        $total_amount = 900.00;    
+                    } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
+                        $total_amount = 1350.00;    
+                    } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
+                        $total_amount = 1750.00;    
+                    } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
+                        $total_amount = 2000.00;    
+                    } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
+                        $total_amount = 2400.00;    
+                    } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
+                        $total_amount = 2800.00;    
+                    } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
+                        $total_amount = 3500.00;    
+                    } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
+                        $total_amount = 4000.00;    
+                    } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
+                        $total_amount = 4500.00;    
+                    }
+                } else {
+                    if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
+                        $total_amount = 250.00;    
+                    } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
+                        $total_amount = 400.00;    
+                    } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
+                        $total_amount = 800.00;    
+                    } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
+                        $total_amount = 1150.00;    
+                    } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
+                        $total_amount = 1500.00;    
+                    } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
+                        $total_amount = 1800.00;    
+                    } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
+                        $total_amount = 2200.00;    
+                    } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
+                        $total_amount = 2600.00;    
+                    } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
+                        $total_amount = 3000.00;    
+                    } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
+                        $total_amount = 3300.00;    
+                    } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
+                        $total_amount = 3600.00;    
+                    }    
+                }
+                $order_no = 'CB_'.Auth::user()->id.'_'.strtotime(date('Y-m-d H:i:s'));
+                $order = Orders::create([
+                    'occassion' => strtoupper($orderData['occassion']),
+                    'cake_type' => strtoupper($orderData['cake']),
+                    'flavor' => $orderData['flavor'] == '' ? 'Not Available' : strtoupper($orderData['flavor']),
+                    'weight' => strtoupper($orderData['weight']),
+                    'order_date' => date('Y-m-d H:i:s'),
+                    'delivery_date_time' => $orderData['delivery_date_time'],
+                    'instruction' => $orderData['message_on_cake'] == "" ? "Not Available" : strtoupper($orderData['message_on_cake']),
+                    'design_reference' => '',
+                    'user_id' => Auth::user()->id,
+                    'status' => 1,
+                    'order_no' => $order_no
+                ]);
+                if($order) {
+                    $payment = Payment::create([
+                        'order_id' => $order_no,
+                        'amount_to_be_paid' => $total_amount,
+                        'amount_paid' => 0,
+                        'payment_id' => 'Not Available',
+                        'total_amount' => $total_amount
+                    ]);    
+                }
+                $adminUsers = User::where('isAdmin', true)->get();
+                $message = 'You got a new order from '.Auth::user()->name;
+                foreach ($adminUsers as $admin) {
+                    //$admin->notify(new NewOrderNotification($message,$order_no));
+                    $admin->notify(new NewOrderNotification());
+                }
+                //$recipient = '+91'.Auth::user()->phone_no;
+                //$message = "Your order for ".$cake_type_name." cake weighted ".$cake_weight_desc." has been placed. Delivery requested on ".date("l, F j, Y g:i A", strtotime($delivery_datetime))."\nThank you for ordering with us.\nTeam CakeBox";
+                //$value = $this->twilioService->sendSms($recipient, $message);
+                return response()->json([
+                    'status' => 'success',
+                    'order_no' => $order_no
+                ]);
+            }
+        }
+
+        return response()->json(['error' => 'Transcription failed'], 500);
     }
 }

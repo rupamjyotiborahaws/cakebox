@@ -29,10 +29,7 @@ class OrderController extends Controller
     }
     
     public function new_order(Request $request) {
-        $types = Type::all();
-        $flavors = Flavor::all();
-        $weights = Weight::all();
-        return view('users.new_order', compact('types','flavors','weights'));
+        return view('users.new_order');
     }
 
     public function place_order(Request $request) {
@@ -45,33 +42,90 @@ class OrderController extends Controller
         $total_amount = 1.00;
         $fileUrl = true;
         $filePath = '';
-        $cake_type_name = Type::where(['id'=>$cake_type])->get()[0]['cake_type'];
-        $cake_weight_desc = Weight::where(['id'=>$cake_weight])->get()[0]['cake_weight'];
-        /*if($cake_type_name == 'Chocolate') {
-            if($cake_weight_desc == '250GM') {
-                $total_amount = 300.00;    
-            } else if($cake_weight_desc == '500GM') {
-                $total_amount = 450.00;    
-            } else if($cake_weight_desc == '1KG') {
-                $total_amount = 900.00;    
-            } else if($cake_weight_desc == '1.5KG') {
-                $total_amount = 1350.00;    
-            } else if($cake_weight_desc == '2KG') {
-                $total_amount = 1750.00;    
+        $error = '';
+        $caketypes = ['Chocolate','Vanilla'];
+        $cakeSelected = '';
+        $found = false;
+        foreach($caketypes as $caketype) {
+            if(stripos($cake_type, $caketype) !== false) {
+                $found = true;
+                $cakeSelected = $caketype;
+                break;
+            }
+        }
+        if($found) {
+            if(preg_match('/\b' . preg_quote($cakeSelected, '/') . '\b/i', $cake_type, $matches)) {
+                $cake_type = strtolower($matches[0]);
             }
         } else {
-            if($cake_weight_desc == '250GM') {
+            if($error == '') {
+                $error = 'Please provide a valid cake (Chocolate or Vanilla)';
+            } else {
+                $error .= ', cake (Chocolate or Vanilla)';
+            }
+        }
+        if (preg_match('/\d+\s*(gm|kg|GM|KG|Gm|Kg)\b/i', $cake_weight, $matches)) {
+            $cake_weight = strtoupper($cake_weight);
+        } 
+        else {
+            if($error == '') {
+                $error = 'Please provide a valid cake weight. For example 500 gm, 1 kg etc.';
+            } else {
+                $error .= ', valid cake weight. For example 500 gm, 1 kg etc.';
+            }
+        }
+        if($error != "") {
+            return redirect()->back()->with(['error' => $error])->withInput();
+        }
+        if($cake_type == 'chocolate') {
+            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
+                $total_amount = 300.00;    
+            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
+                $total_amount = 450.00;    
+            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
+                $total_amount = 900.00;    
+            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
+                $total_amount = 1350.00;    
+            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
+                $total_amount = 1750.00;    
+            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+                $total_amount = 2000.00;    
+            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+                $total_amount = 2400.00;    
+            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+                $total_amount = 2800.00;    
+            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+                $total_amount = 3500.00;    
+            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+                $total_amount = 4000.00;    
+            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+                $total_amount = 4500.00;    
+            }
+        } else {
+            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
                 $total_amount = 250.00;    
-            } else if($cake_weight_desc == '500GM') {
+            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
                 $total_amount = 400.00;    
-            } else if($cake_weight_desc == '1KG') {
+            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
                 $total_amount = 800.00;    
-            } else if($cake_weight_desc == '1.5KG') {
+            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
                 $total_amount = 1150.00;    
-            } else if($cake_weight_desc == '2KG') {
+            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
                 $total_amount = 1500.00;    
+            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+                $total_amount = 1800.00;    
+            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+                $total_amount = 2200.00;    
+            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+                $total_amount = 2600.00;    
+            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+                $total_amount = 3000.00;    
+            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+                $total_amount = 3300.00;    
+            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+                $total_amount = 3600.00;    
             }    
-        }*/
+        }
         if($request->hasFile('image')) {
             $request->validate([
                 'image' => 'file|mimes:jpg,jpeg,png,svg|max:2048',
@@ -85,12 +139,12 @@ class OrderController extends Controller
             $order_no = 'CB_'.Auth::user()->id.'_'.strtotime(date('Y-m-d H:i:s'));
             $order = Orders::create([
                 'occassion' => $occassion,
-                'cake_type' => $cake_type,
-                'flavor' => $cake_flavor,
-                'weight' => $cake_weight,
+                'cake_type' => strtoupper($cake_type),
+                'flavor' => $cake_flavor == null ? 'Not Available' : strtoupper($cake_flavor),
+                'weight' => strtoupper($cake_weight),
                 'order_date' => date('Y-m-d H:i:s'),
                 'delivery_date_time' => $delivery_datetime,
-                'instruction' => $cake_instruction == null || $cake_instruction == "" ? "Not Available" : $cake_instruction,
+                'instruction' => $cake_instruction == null || $cake_instruction == "" ? "Not Available" : strtoupper($cake_instruction),
                 'design_reference' => $filePath,
                 'user_id' => Auth::user()->id,
                 'status' => 1,
@@ -116,7 +170,7 @@ class OrderController extends Controller
             //$value = $this->twilioService->sendSms($recipient, $message);
             return redirect()->route('order')->with('success', 'Your order is placed! Track your order <a href="'.route('your_orders').'">here</a>');
         } else {
-            return redirect()->back()->withErrors(['error' => 'Uploaded file could not be saved. Please try again']);
+            return redirect()->back()->with(['error' => 'Uploaded file could not be saved. Please try again']);
         }
     }
 

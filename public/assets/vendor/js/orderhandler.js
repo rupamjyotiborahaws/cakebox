@@ -23,7 +23,6 @@ function loadDataIntoTable(data) {
         hours = hours ? hours : 12; // Convert 0 to 12
         hours = hours.toString().padStart(2, '0');
         let time = `${hours}:${minutes} ${ampm}`;
-        console.log(time);
         let img_url = '';
         if(data[i].design_reference != '') {
             img_url += '<p style="width:300px;"><a href='+base_origin+'/storage/'+data[i].design_reference+' target="_blank">Your uploaded design</a></p>';
@@ -233,7 +232,6 @@ $(document).on('click', '.modify', function() {
         data: {order_no},
         success :function(resp){
             if(resp.status == 'success'){
-                console.log(resp.data);
                 let result = resp.data.result[0];
                 let occassion_types = ['Birthday','Engagement','Wedding','Wedding Anniversary','New store/office/institute/organization opening'];
                 $('#o_id').val(result.oid);
@@ -241,47 +239,23 @@ $(document).on('click', '.modify', function() {
                 html += '<p style="font-size:16px; font-weight:500; color: red; text-align:center;" class="msg-error d-none;"></p>';
                 html += '<div class="row" style="margin-bottom:10px;">';
                 html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Occassion</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
-                html += '<select class="form-control" name="occassion" id="occassion">';
-                html += '<option value="'+result.occassion+'">'+result.occassion+'</option>';
-                occassion_types.forEach(otype => {
-                    if(otype != result.occassion) {
-                        html += '<option value="'+otype+'">'+otype+'</option>';    
-                    }
-                });
-                html += '</select></div></div>';
+                html += '<input type="text" id="occassion" name="occassion" class="form-control" placeholder="e.g. Birthday" value="'+result.occassion+'" required>';
+                html += '</div></div>';
                 //html += '<input type="text" class="form-control" name="occassion" id="occassion" value="'+result.occassion+'" /></div></div>';
                 html += '<div class="row" style="margin-bottom:10px;">';
-                html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Cake Type</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
-                html += '<select class="form-control" name="cake_type" id="cake_type">';
-                html += '<option value="'+result.typeid+'">'+result.cake_type+'</option>';
-                resp.data.types.forEach(ctype => {
-                    if(ctype.id != result.typeid) {
-                        html += '<option value="'+ctype.id+'">'+ctype.cake_type+'</option>';    
-                    }
-                });
-                html += '</select></div></div>';
+                html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Cake</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
+                html += '<input type="text" id="cake_type" name="cake_type" class="form-control" placeholder="e.g. Chocolate, Vanilla" value="'+result.cake_type+'" required>';
+                html += '</div></div>';
 
                 html += '<div class="row" style="margin-bottom:10px;">';
                 html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Flavor</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
-                html += '<select class="form-control" name="cake_flavor" id="cake_flavor">';
-                html += '<option value="'+result.flavorid+'">'+result.flavor_name+'</option>';
-                resp.data.flavors.forEach(flavor => {
-                    if(flavor.id != result.flavorid) {
-                        html += '<option value="'+flavor.id+'">'+flavor.flavor_name+'</option>';    
-                    }
-                });
-                html += '</select></div></div>';
+                html += '<input type="text" id="cake_flavor" name="cake_flavor" class="form-control" placeholder="e.g. Vanilla" value="'+result.flavor+'">';
+                html += '</div></div>';
 
                 html += '<div class="row" style="margin-bottom:10px;">';
                 html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Weight</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';
-                html += '<select class="form-control" name="cake_weight" id="cake_weight">';
-                html += '<option value="'+result.weightid+'">'+result.cake_weight+'</option>';
-                resp.data.weights.forEach(weight => {
-                    if(weight.id != result.weightid) {
-                        html += '<option value="'+weight.id+'">'+weight.cake_weight+'</option>';    
-                    }
-                });
-                html += '</select></div></div>';
+                html += '<input type="text" id="cake_weight" name="cake_weight" class="form-control" placeholder="e.g. 500gm, 1kg. Maximum weight up to 5 kg" value="'+result.weight+'" required>';
+                html += '</div></div>';
 
                 html += '<div class="row" style="margin-bottom:10px;">';
                 html += '<div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">Instruction</div><div class="col-md-8 col-lg-8 col-sm-8 col-xs-12">';

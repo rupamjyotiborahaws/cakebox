@@ -34,6 +34,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::post('cancel-order', [UserController::class, 'cancel_order']);
     Route::get('get-order-info', [UserController::class, 'get_order_info']);
     Route::post('update-order', [UserController::class, 'update_order']);
+    Route::post('/voice-order', [UserController::class, 'voice_order']);
 
     // --------------------------- Admin APIs -------------------------------
     Route::get('orders-for-admin-dashboard', [AdminController::class, 'get_orders_for_admin_dashboard']);
