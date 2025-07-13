@@ -170,7 +170,7 @@ class UserController extends Controller
         $cake_weight  = $request->cake_weight;
         $cake_instruction  = trim($request->cake_instruction);
         $delivery_datetime = Carbon::parse($request->cake_delivery_date . ' ' . $request->cake_delivery_time);
-        $total_amount = 0.00;
+        $total_amount = 1.00;
         $fileUrl = true;
         $filePath = '';
         $error = '';
@@ -208,55 +208,55 @@ class UserController extends Controller
         if($error != "") {
             return redirect()->back()->with(['error' => $error])->withInput();
         }
-        if($cake_type == 'chocolate') {
-            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
-                $total_amount = 300.00;    
-            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
-                $total_amount = 450.00;    
-            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
-                $total_amount = 900.00;    
-            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
-                $total_amount = 1350.00;    
-            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
-                $total_amount = 1750.00;    
-            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
-                $total_amount = 2000.00;    
-            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
-                $total_amount = 2400.00;    
-            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
-                $total_amount = 2800.00;    
-            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
-                $total_amount = 3500.00;    
-            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
-                $total_amount = 4000.00;    
-            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
-                $total_amount = 4500.00;    
-            }
-        } else {
-            if($cake_weight == '250GM' || $cake_weight == '250 GM') {
-                $total_amount = 250.00;    
-            } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
-                $total_amount = 400.00;    
-            } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
-                $total_amount = 800.00;    
-            } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
-                $total_amount = 1150.00;    
-            } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
-                $total_amount = 1500.00;    
-            } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
-                $total_amount = 1800.00;    
-            } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
-                $total_amount = 2200.00;    
-            } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
-                $total_amount = 2600.00;    
-            } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
-                $total_amount = 3000.00;    
-            } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
-                $total_amount = 3300.00;    
-            } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
-                $total_amount = 3600.00;    
-            }    
-        }
+        // if($cake_type == 'chocolate') {
+        //     if($cake_weight == '250GM' || $cake_weight == '250 GM') {
+        //         $total_amount = 300.00;    
+        //     } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
+        //         $total_amount = 450.00;    
+        //     } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
+        //         $total_amount = 900.00;    
+        //     } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
+        //         $total_amount = 1350.00;    
+        //     } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
+        //         $total_amount = 1750.00;    
+        //     } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+        //         $total_amount = 2000.00;    
+        //     } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+        //         $total_amount = 2400.00;    
+        //     } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+        //         $total_amount = 2800.00;    
+        //     } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+        //         $total_amount = 3500.00;    
+        //     } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+        //         $total_amount = 4000.00;    
+        //     } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+        //         $total_amount = 4500.00;    
+        //     }
+        // } else {
+        //     if($cake_weight == '250GM' || $cake_weight == '250 GM') {
+        //         $total_amount = 250.00;    
+        //     } else if($cake_weight == '500GM' || $cake_weight == '500 GM') {
+        //         $total_amount = 400.00;    
+        //     } else if($cake_weight == '1KG' || $cake_weight == '1 KG') {
+        //         $total_amount = 800.00;    
+        //     } else if($cake_weight == '1.5KG' || $cake_weight == '1.5 KG') {
+        //         $total_amount = 1150.00;    
+        //     } else if($cake_weight == '2KG' || $cake_weight == '2 KG') {
+        //         $total_amount = 1500.00;    
+        //     } else if($cake_weight == '2.5KG' || $cake_weight == '2.5 KG') {
+        //         $total_amount = 1800.00;    
+        //     } else if($cake_weight == '3KG' || $cake_weight == '3 KG') {
+        //         $total_amount = 2200.00;    
+        //     } else if($cake_weight == '3.5KG' || $cake_weight == '3.5 KG') {
+        //         $total_amount = 2600.00;    
+        //     } else if($cake_weight == '4KG' || $cake_weight == '4 KG') {
+        //         $total_amount = 3000.00;    
+        //     } else if($cake_weight == '4.5KG' || $cake_weight == '4.5 KG') {
+        //         $total_amount = 3300.00;    
+        //     } else if($cake_weight == '5KG' || $cake_weight == '5 KG') {
+        //         $total_amount = 3600.00;    
+        //     }    
+        // }
         if($request->hasFile('image')) {
             $request->validate([
                 'image' => 'file|mimes:jpg,jpeg,png,svg|max:2048',
@@ -433,55 +433,55 @@ class UserController extends Controller
                         'message' => $error
                     ]);
                 }
-                if($orderData['cake'] == 'chocolate') {
-                    if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
-                        $total_amount = 300.00;    
-                    } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
-                        $total_amount = 450.00;    
-                    } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
-                        $total_amount = 900.00;    
-                    } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
-                        $total_amount = 1350.00;    
-                    } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
-                        $total_amount = 1750.00;    
-                    } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
-                        $total_amount = 2000.00;    
-                    } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
-                        $total_amount = 2400.00;    
-                    } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
-                        $total_amount = 2800.00;    
-                    } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
-                        $total_amount = 3500.00;    
-                    } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
-                        $total_amount = 4000.00;    
-                    } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
-                        $total_amount = 4500.00;    
-                    }
-                } else {
-                    if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
-                        $total_amount = 250.00;    
-                    } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
-                        $total_amount = 400.00;    
-                    } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
-                        $total_amount = 800.00;    
-                    } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
-                        $total_amount = 1150.00;    
-                    } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
-                        $total_amount = 1500.00;    
-                    } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
-                        $total_amount = 1800.00;    
-                    } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
-                        $total_amount = 2200.00;    
-                    } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
-                        $total_amount = 2600.00;    
-                    } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
-                        $total_amount = 3000.00;    
-                    } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
-                        $total_amount = 3300.00;    
-                    } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
-                        $total_amount = 3600.00;    
-                    }    
-                }
+                // if($orderData['cake'] == 'chocolate') {
+                //     if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
+                //         $total_amount = 300.00;    
+                //     } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
+                //         $total_amount = 450.00;    
+                //     } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
+                //         $total_amount = 900.00;    
+                //     } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
+                //         $total_amount = 1350.00;    
+                //     } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
+                //         $total_amount = 1750.00;    
+                //     } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
+                //         $total_amount = 2000.00;    
+                //     } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
+                //         $total_amount = 2400.00;    
+                //     } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
+                //         $total_amount = 2800.00;    
+                //     } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
+                //         $total_amount = 3500.00;    
+                //     } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
+                //         $total_amount = 4000.00;    
+                //     } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
+                //         $total_amount = 4500.00;    
+                //     }
+                // } else {
+                //     if($orderData['weight'] == '250GM' || $orderData['weight'] == '250 GM') {
+                //         $total_amount = 250.00;    
+                //     } else if($orderData['weight'] == '500GM' || $orderData['weight'] == '500 GM') {
+                //         $total_amount = 400.00;    
+                //     } else if($orderData['weight'] == '1KG' || $orderData['weight'] == '1 KG') {
+                //         $total_amount = 800.00;    
+                //     } else if($orderData['weight'] == '1.5KG' || $orderData['weight'] == '1.5 KG') {
+                //         $total_amount = 1150.00;    
+                //     } else if($orderData['weight'] == '2KG' || $orderData['weight'] == '2 KG') {
+                //         $total_amount = 1500.00;    
+                //     } else if($orderData['weight'] == '2.5KG' || $orderData['weight'] == '2.5 KG') {
+                //         $total_amount = 1800.00;    
+                //     } else if($orderData['weight'] == '3KG' || $orderData['weight'] == '3 KG') {
+                //         $total_amount = 2200.00;    
+                //     } else if($orderData['weight'] == '3.5KG' || $orderData['weight'] == '3.5 KG') {
+                //         $total_amount = 2600.00;    
+                //     } else if($orderData['weight'] == '4KG' || $orderData['weight'] == '4 KG') {
+                //         $total_amount = 3000.00;    
+                //     } else if($orderData['weight'] == '4.5KG' || $orderData['weight'] == '4.5 KG') {
+                //         $total_amount = 3300.00;    
+                //     } else if($orderData['weight'] == '5KG' || $orderData['weight'] == '5 KG') {
+                //         $total_amount = 3600.00;    
+                //     }    
+                // }
                 $order_no = 'CB_'.Auth::user()->id.'_'.strtotime(date('Y-m-d H:i:s'));
                 $order = Orders::create([
                     'occassion' => strtoupper($orderData['occassion']),
