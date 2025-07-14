@@ -335,18 +335,19 @@ class UserController extends Controller
             $transcribedText = $response->json()['text'];
             $error = "";
             // Step 2: Parse using GPT
-            $prompt = <<<PROMPT
+            $today = date('Y-m-d');
+            $promptTemplate = <<<PROMPT
             Convert the following cake order into JSON format with keys:
             - occassion
             - cake    
-            - flavor
+            - flavor (ONLY include if the word "flavor" is explicitly mentioned by the user. Do NOT infer it from cake or description.)
             - weight
             - message_on_cake
-            - delivery_date_time (in ISO format)
-            - quantity
+            - delivery_date_time (in ISO 8601 format, convert relative dates like "tomorrow", "day after tomorrow", or "next Monday" to actual date and time based on today's date: {{TODAY_DATE}})
             User said: "{$transcribedText}"
             If something is missing, leave it blank.
             PROMPT;
+            $prompt = str_replace('{{TODAY_DATE}}', $today, $promptTemplate);
             $gptResponse = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
                 'model' => 'gpt-4',
                 'messages' => [
@@ -359,13 +360,13 @@ class UserController extends Controller
             }
             $orderData = json_decode($gptResponse->json()['choices'][0]['message']['content'], true);
 
-            if($orderData['occassion'] == "") {
-                if($error == "") {
-                    $error = "Tell me the Occassion";
-                } else {
-                    $error .= ", Occassion";    
-                }
-            }
+            // if($orderData['occassion'] == "") {
+            //     if($error == "") {
+            //         $error = "Tell me the Occassion";
+            //     } else {
+            //         $error .= ", Occassion";    
+            //     }
+            // }
             if($orderData['cake'] == "") {
                 if($error == "") {
                     $error = "Tell me the cake (Chocolate/Vanilla)";

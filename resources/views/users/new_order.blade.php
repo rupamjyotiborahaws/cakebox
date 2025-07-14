@@ -122,7 +122,11 @@
             </div>
             <div class="col-md-3 col-lg-3 position-relative">
                 <div class="position-absolute bottom-0 start-0 end-0 bg-light p-2">
-                    <img src="{{ asset('assets/vendor/imgs/order_cropped.gif') }}" class="floating-gif" onclick="startRecording()" height="100" width="100" style="cursor:pointer;">
+                    <div>
+                        <p style="float:right; margin-bottom:80px; margin-right:27px;">Order me</p>
+                        <img src="{{ asset('assets/vendor/imgs/order1.gif') }}" class="floating-gif" onclick="startRecording()" height="100" width="100" 
+                             style="cursor:pointer; float:right;">
+                    </div>
                 </div>
             </div>
         </div>
