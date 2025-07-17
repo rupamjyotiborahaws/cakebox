@@ -336,16 +336,14 @@ class UserController extends Controller
             $error = "";
             // Step 2: Parse using GPT
             $today = date('Y-m-d');
+            //(ONLY include if the word "flavor" is explicitly mentioned by the user. Do NOT infer it from cake or description.)
             $promptTemplate = <<<PROMPT
-            Convert the following cake order into JSON format with keys:
-            - occassion
-            - cake    
-            - flavor (ONLY include if the word "flavor" is explicitly mentioned by the user. Do NOT infer it from cake or description.)
-            - weight
-            - message_on_cake
-            - delivery_date_time (in ISO 8601 format, convert relative dates like "tomorrow", "day after tomorrow", or "next Monday" to actual date and time based on today's date: {{TODAY_DATE}})
-            User said: "{$transcribedText}"
-            If something is missing, leave it blank.
+            Your task is to convert the following cake order into JSON format with keys:
+            occassion,cake,flavor (ONLY include if the word "flavor" is explicitly mentioned by the user. Do NOT infer it from cake or description.),
+            weight,message_on_cake, delivery_date_time (in ISO 8601 format, convert relative dates like "tomorrow", "day after tomorrow", or "next Monday" to actual date and 
+            time based on today's date: {{TODAY_DATE}}. Convert time like "evening" to 3PM, "morning" to 9AM, "afternoon" or "noon" to 12PM if no specific time is included)
+            If you can not find a key in the text below, delimited by tripple backtics, leave the value as blank.
+            Text: ```{$transcribedText}```
             PROMPT;
             $prompt = str_replace('{{TODAY_DATE}}', $today, $promptTemplate);
             $gptResponse = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [

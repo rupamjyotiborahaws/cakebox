@@ -129,6 +129,7 @@ nav ul li a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 20px;
 }
 
 /* Mobile Styles */
@@ -486,6 +487,9 @@ nav ul li a:hover {
     }
     nav {
         height: 15vh;
+    }
+    nav ul {
+        padding-bottom: 10px;
     }
     .carousel {
         width: 100%;

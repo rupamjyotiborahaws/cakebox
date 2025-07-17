@@ -149,7 +149,7 @@ $(document).ready(function() {
                     $('.loading_msg').prepend('Redirecting to Dashboard');
                     if(resp.landing) {
                         setTimeout(() => {
-                            window.location.href = '/'+resp.landing;
+                            window.location.href = resp.landing;
                         }, 2000);
                     } else {
                         window.location.href = '/';

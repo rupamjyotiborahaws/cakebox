@@ -1,18 +1,40 @@
-@extends('layout.admin')
+@extends('layout.app')
 
 @section('content')
 <link href="{{url('/')}}/assets/vendor/css/admin.css" rel="stylesheet" />
-<div class="row">
-    <div class="col-md-12 col-lg-12 col-xs-12 nav-div">
-        @extends('admin.admin-nav')
+<link href="{{url('/')}}/assets/vendor/css/frontend.css" rel="stylesheet" />
+<div class="custom-container">
+    <div class="admin-main-window">
+        <nav>
+            <div class="nav-container">
+                <div class="logo">CakeBox</div>
+                <input type="checkbox" id="nav-toggle" />
+                <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    @if(Auth::check() && Auth::user()->isAdmin === 0)
+                        <li><a href="{{route('order')}}">Place Order</a></li>
+                        <li><a href="{{route('your_orders')}}">Your Orders</a></li>
+                        <li><a href="{{route('profile')}}">Profile</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><a href="{{route('logout_user')}}">Logout</a></li>
+                    @elseif(Auth::check() && Auth::user()->isAdmin === 1)
+                        <li><a href="{{route('admin_dashboard')}}">Dashboard</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><button onclick="askNotificationPermission()">Enable Notifications</button></li>
+                        <li><a href="{{route('logout_admin')}}">Logout</a></li>
+                    @endif
+                    @if(!Auth::check())
+                        <li><button class="btn btn-success" onclick="window.location='{{ route('user-login') }}'">Sign In</button>
+                    @endif
+                </ul>
+            </div>
+        </nav>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-2 col-lg-2 col-sm-12 col-xs-12">
-
-    </div>
-    <div class="col-md-10 col-lg-10 col-sm-12 col-xs-12">
-        <div class="row dashboard-counts">
+    <div class="order-counts">
+        <div class="dashboard-counts">
             <!-- justify-content-center align-items-center -->    
             
         </div>

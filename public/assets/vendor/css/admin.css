@@ -1,5 +1,6 @@
 .dashboard-cards {
-    width: 24rem; height: 8rem;
+    width: auto; 
+    height: 8rem;
 }
 .dashboard-cards-title {
     height: 2.5rem;
@@ -36,10 +37,26 @@
 
 .admin-dashboard-divs {
     margin-top: 20px;
+    width: 100%;
 }
 
-@media only screen and (min-width: 200px) and (max-width: 767px) {
+.admin-main-window {
+    width: 100%;
+    height: 15vh;
+    margin: 0;
+    padding: 0;   
+}
+
+.order-counts {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;    
+}
+
+@media only screen and (max-width: 767px) {
     .admin-dashboard-divs {
+        width: 100%;
         margin-bottom: 20px;
     }
 }

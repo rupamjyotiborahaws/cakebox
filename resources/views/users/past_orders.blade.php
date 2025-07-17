@@ -13,35 +13,56 @@
         padding: 5px;
     }
 </style>
-<div class="row">
-    <div class="col-md-12 col-lg-12 col-xs-12 nav-div">
-        @extends('frontend.navbar')
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center align-items-center full-height">
-            <div class="card p-2 shadow-lg order-div">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Your orders</h5>
-                    <div class="table-responsive orders-data">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width:20%;">Sl. No.</th>
-                                    <th style="width:40%;">Order #</th>
-                                    <th style="width:40%;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="orders-tbody">
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                    <h5 class="card-title text-center no-data">Your have not placed any order</h5>
-                </div>
+<div class="custom-container">
+    <div class="admin-main-window">
+        <nav>
+            <div class="nav-container">
+                <div class="logo">CakeBox</div>
+                <input type="checkbox" id="nav-toggle" />
+                <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    @if(Auth::check() && Auth::user()->isAdmin === 0)
+                        <li><a href="{{route('order')}}">Place Order</a></li>
+                        <li><a href="{{route('your_orders')}}">Your Orders</a></li>
+                        <li><a href="{{route('profile')}}">Profile</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><a href="{{route('logout_user')}}">Logout</a></li>
+                    @elseif(Auth::check() && Auth::user()->isAdmin === 1)
+                        <li><a href="{{route('admin_dashboard')}}">Dashboard</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><button onclick="askNotificationPermission()">Enable Notifications</button></li>
+                        <li><a href="{{route('logout_admin')}}">Logout</a></li>
+                    @endif
+                    @if(!Auth::check())
+                        <li><button class="btn btn-success" onclick="window.location='{{ route('user-login') }}'">Sign In</button>
+                    @endif
+                </ul>
             </div>
-        </div>
+        </nav>
+
+    </div>
+    <div class="card p-2 shadow-lg order-div">
+      <div class="card-body">
+          <h5 class="card-title text-center">Your orders</h5>
+          <div class="table-responsive orders-data">
+              <table class="table table-bordered">
+                  <thead>
+                      <tr>
+                          <th style="width:20%;">Sl. No.</th>
+                          <th style="width:40%;">Order #</th>
+                          <th style="width:40%;">Status</th>
+                      </tr>
+                  </thead>
+                  <tbody class="orders-tbody">
+                      
+                  </tbody>
+              </table>
+          </div>
+          <h5 class="card-title text-center no-data">Your have not placed any order</h5>
+      </div>
     </div>
 </div>
     

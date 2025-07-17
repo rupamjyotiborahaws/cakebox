@@ -52,17 +52,38 @@
     }
 </style>
 @section('content')
-<div class="row">
-    <div class="col-md-12 col-lg-12 col-xs-12 nav-div">
-        @extends('frontend.navbar')
-    </div>
-    
-    <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
-        <div class="row">
-            <div class="col-md-3 col-lg-3">
-
+<div class="custom-container">
+    <div class="admin-main-window">
+        <nav>
+            <div class="nav-container">
+                <div class="logo">CakeBox</div>
+                <input type="checkbox" id="nav-toggle" />
+                <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    @if(Auth::check() && Auth::user()->isAdmin === 0)
+                        <li><a href="{{route('order')}}">Place Order</a></li>
+                        <li><a href="{{route('your_orders')}}">Your Orders</a></li>
+                        <li><a href="{{route('profile')}}">Profile</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><a href="{{route('logout_user')}}">Logout</a></li>
+                    @elseif(Auth::check() && Auth::user()->isAdmin === 1)
+                        <li><a href="{{route('admin_dashboard')}}">Dashboard</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><button onclick="askNotificationPermission()">Enable Notifications</button></li>
+                        <li><a href="{{route('logout_admin')}}">Logout</a></li>
+                    @endif
+                    @if(!Auth::check())
+                        <li><button class="btn btn-success" onclick="window.location='{{ route('user-login') }}'">Sign In</button>
+                    @endif
+                </ul>
             </div>
-            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6">
+        </nav>
+    
+        
+            
                 <div class="d-flex full-height">
                     <div class="card p-4 shadow-lg order-div">
                         <div class="card-body">
@@ -119,17 +140,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 col-lg-3 position-relative">
                 <div class="position-absolute bottom-0 start-0 end-0 bg-light p-2">
                     <div>
-                        <p style="float:right; margin-bottom:80px; margin-right:27px;">Order me</p>
+                        <!-- <p style="float:right; margin-bottom:80px; margin-right:27px;">Order me</p> -->
                         <img src="{{ asset('assets/vendor/imgs/order1.gif') }}" class="floating-gif" onclick="startRecording()" height="100" width="100" 
                              style="cursor:pointer; float:right;">
                     </div>
                 </div>
-            </div>
-        </div>
+        
+        
     </div>
 </div>
 <div class="modal fade" id="voiceOrderListenModal" tabindex="-1" aria-labelledby="voiceOrderListenModalLabel" aria-hidden="true">

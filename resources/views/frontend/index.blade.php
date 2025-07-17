@@ -12,12 +12,22 @@
                 <ul>
                     <li><a href="#">Home</a></li>
                     <li><a href="#">About</a></li>
-                    @if(Auth::check())
+                    <li><a href="#">Contact Us</a></li>
+                    @if(Auth::check() && Auth::user()->isAdmin === 0)
                         <li><a href="{{route('order')}}">Place Order</a></li>
                         <li><a href="{{route('your_orders')}}">Your Orders</a></li>
+                        <li><a href="{{route('profile')}}">Profile</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><a href="{{route('logout_user')}}">Logout</a></li>
+                    @elseif(Auth::check() && Auth::user()->isAdmin === 1)
+                        <li><a href="{{route('admin_dashboard')}}">Dashboard</a></li>
+                        <!-- <li><p href="#">Last Login : <br />{{date("l, F j, Y g:i A", strtotime(Auth::user()->last_login))}}</p></li> -->
+                        <li><button onclick="askNotificationPermission()">Enable Notifications</button></li>
+                        <li><a href="{{route('logout_admin')}}">Logout</a></li>
                     @endif
-                    <li><a href="#">Contact Us</a></li>
-                    <li><button class="btn btn-success" style="margin-bottom:20px;" onclick="window.location='{{ route('user-login') }}'">Sign In</button>
+                    @if(!Auth::check())
+                        <li><button class="btn btn-success" onclick="window.location='{{ route('user-login') }}'">Sign In</button>
+                    @endif
                 </ul>
             </div>
         </nav>
@@ -246,4 +256,45 @@
 </script>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<script>
+    async function askNotificationPermission() {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register('/service-worker.js', {
+                scope: '/',
+                type: 'classic',
+            })
+            .then(reg => {
+                console.log('Service worker registered:', reg);
+            })
+            .catch(err => {
+                console.error('Service worker registration failed:', err);
+            });
+        }
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        const ready = await navigator.serviceWorker.ready;
+        const subscription = await ready.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array("BH9E2StT6Y1ZvCdLCiUOQkdK2Ig7NReQ7PTYna_MGaQ_wj9UB4JKOI2TnDihWnA8s9Fj9D243YC9VCR1OSafGUI")
+        });
+        await fetch('/api/v1/push/subscribe', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(subscription)
+        });
+
+        alert('Notification subscription registered!');
+    }
+
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+    }
 </script>

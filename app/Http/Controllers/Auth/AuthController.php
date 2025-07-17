@@ -55,7 +55,7 @@ class AuthController extends Controller
                 $cookie2 = Cookie::make('last_login', base64_encode($user->last_login), 60 * 24 * 7, '/', null, false, true);
                 return response()->json([
                     'status' => 'success',
-                    'landing' => $user->isAdmin === 0 ? 'dashboard' : 'admin/dashboard',
+                    'landing' => '/',
                     'message' => 'Login successfully.'
                 ])->withCookie($cookie1)->withCookie($cookie2);
             } else {

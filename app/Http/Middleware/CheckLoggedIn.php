@@ -27,12 +27,8 @@ class CheckLoggedIn
                 Cookie::queue('last_login', false, -1);
                 return redirect()->route('user-login')->with('error', 'You are logged out!');
             }
-            if($request->path() == '/' || $request->path() == 'user-login') {
-                if(Auth::user()->isAdmin == 1) {
-                    return redirect()->route('admin_dashboard');
-                } else {
-                    return redirect()->route('dashboard');
-                } 
+            if($request->path() == 'user-login') {
+                return redirect()->route('index'); 
             }
             //return $next($request);
         }
